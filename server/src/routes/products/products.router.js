@@ -1,9 +1,19 @@
 const express = require("express");
 
-const { getAllProducts } = require("./products.controller");
+const {
+  httpGetAllProducts,
+  httpGetProductByID,
+  httpDeleteProduct,
+  httpAddProduct,
+  httpUpdateProduct,
+} = require("./products.controller");
 
 const productsRouter = express.Router();
 
-productsRouter.get("/allProducts", getAllProducts);
+productsRouter.get("/", httpGetAllProducts);
+productsRouter.get("/product/:productID", httpGetProductByID);
+productsRouter.post("/", httpAddProduct);
+productsRouter.put("/", httpUpdateProduct);
+productsRouter.delete("/:id", httpDeleteProduct);
 
 module.exports = productsRouter;

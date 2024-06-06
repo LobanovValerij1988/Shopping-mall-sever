@@ -37,4 +37,13 @@ const orders = [
   },
 ];
 
-module.exports = orders;
+function getAllOrders() {
+  return orders;
+}
+
+function getOrderByID(orderID) {
+  return orders.find((order) => order.id === orderID);
+}
+function deleteOrder(orderID) {}
+
+module.exports = { getOrderByID, getAllOrders, deleteOrder };
