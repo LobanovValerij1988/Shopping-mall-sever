@@ -1,17 +1,33 @@
-let categories = [
-  { name: "shoes", id: 1 },
-  { name: "wears", id: 2 },
-  { name: "tools", id: 3 },
-  { name: "books", id: 4 },
-  { name: "cars", id: 5 },
-];
+const categories = require("./categories.mongo");
+
+async function seedCategories() {
+  let seedingCategories = ["wears", "tools", "books", "cars", "realEstate"];
+  seedingCategories.forEach(async (seedingCategory) => {
+    await categories.updateOne(
+      { name: seedingCategory },
+      { name: seedingCategory },
+      {
+        upsert: true,
+      }
+    );
+  });
+}
+
+async function loadCategoriesFromSeed() {
+  const firstCategory = await categories.findOne();
+  if (firstCategory) {
+    console.log("Categories data already loaded");
+  } else {
+    await seedCategories();
+  }
+}
 
 function isCategoryExist(categoryID) {
   return categories.some((category) => category.id === categoryID);
 }
 
-function getAllCategories() {
-  return categories;
+async function getAllCategories() {
+  return await categories.find({}, { __v: 0 });
 }
 
 function getCategoryByID(categoryID) {
@@ -35,6 +51,7 @@ function updateCategory(updatedCategory) {
 }
 
 module.exports = {
+  loadCategoriesFromSeed,
   isCategoryExist,
   getAllCategories,
   getCategoryByID,

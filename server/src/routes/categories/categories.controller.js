@@ -8,8 +8,8 @@ const {
 } = require("../../models/categories.model");
 const { isCategoryValid } = require("./categoryValidator");
 
-function httpGetAllCategories(req, res) {
-  res.status(200).json(getAllCategories());
+async function httpGetAllCategories(req, res) {
+  res.status(200).json(await getAllCategories());
 }
 
 function httpGetCategoryByID(req, res) {

@@ -4,8 +4,8 @@ const {
   deleteOrder,
 } = require("../../models/orders.model");
 
-function httpGetAllOrders(req, res) {
-  res.status(200).json(getAllOrders());
+async function httpGetAllOrders(req, res) {
+  res.status(200).json(await getAllOrders());
 }
 
 function httpGetOrderByID(req, res) {
