@@ -8,8 +8,8 @@ const {
 } = require("../../models/products.model");
 const { isProductValid } = require("./productValidator");
 
-function httpGetAllProducts(req, res) {
-  return res.status(200).json(getAllProducts());
+async function httpGetAllProducts(req, res) {
+  return res.status(200).json(await getAllProducts());
 }
 
 function httpAddProduct(req, res) {

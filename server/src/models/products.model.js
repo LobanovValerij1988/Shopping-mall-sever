@@ -1,7 +1,13 @@
 const products = require("./products.mongo");
 
-function getAllProducts() {
-  return products;
+async function getAllProducts() {
+  return await products
+    .find({}, { __v: 0 })
+    .populate({
+      path: "category",
+      select: "name -_id",
+    })
+    .exec();
 }
 
 function getProductByID(productID) {
