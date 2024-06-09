@@ -2,7 +2,7 @@ const orders = require("./orders.mongo");
 
 async function getAllOrders() {
   return await orders
-    .find({})
+    .find({}, { __v: 0 })
     .populate({
       path: "customer",
       select: "nickName -_id",

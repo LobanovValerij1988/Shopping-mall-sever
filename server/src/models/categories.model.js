@@ -1,35 +1,35 @@
 const categories = require("./categories.mongo");
 
-function isCategoryExist(categoryID) {
-  return categories.some((category) => category.id === categoryID);
-}
-
 async function getAllCategories() {
   return await categories.find({}, { __v: 0 });
 }
 
-function getCategoryByID(categoryID) {
-  return categories.find((category) => category.id === categoryID);
+async function getCategoryByID(categoryID) {
+  return await categories.findById(categoryID, "_id, name");
 }
 
-function addNewCategory(category) {
-  categories.push(category);
+async function addNewCategory(category) {
+  const categoryCerated = await categories.create(category);
+  const { __v, ...otherFields } = categoryCerated.toObject();
+  return otherFields;
 }
 
-function deleteCategory(categoryID) {}
+async function deleteCategory(categoryID) {
+  return await categories.findByIdAndDelete(categoryID);
+}
 
-function updateCategory(updatedCategory) {
-  categories = categories.map((category) => {
-    if (category.id === updatedCategory.id) {
-      return updatedCategory;
-    } else {
-      return category;
-    }
+async function updateCategory(updatedCategory) {
+  const { _id, ...otherFields } = updatedCategory;
+  return await categories.findByIdAndUpdate(_id, otherFields, {
+    new: true,
+    runValidators: true,
+    select: {
+      __v: 0,
+    },
   });
 }
 
 module.exports = {
-  isCategoryExist,
   getAllCategories,
   getCategoryByID,
   addNewCategory,

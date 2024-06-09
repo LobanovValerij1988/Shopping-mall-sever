@@ -2,68 +2,75 @@ const {
   getAllCategories,
   addNewCategory,
   updateCategory,
-  isCategoryExist,
   getCategoryByID,
   deleteCategory,
 } = require("../../models/categories.model");
-const { isCategoryValid } = require("./categoryValidator");
 
 async function httpGetAllCategories(req, res) {
   res.status(200).json(await getAllCategories());
 }
 
-function httpGetCategoryByID(req, res) {
-  const { categoryID } = req.params;
-  const category = getCategoryByID(Number(categoryID));
-  if (!category) {
+async function httpGetCategoryByID(req, res) {
+  try {
+    const categoryID = req.params.id;
+    const category = await getCategoryByID(categoryID);
+    if (!category) {
+      return res.status(400).json({
+        error: "category not found",
+      });
+    } else {
+      return res.status(201).json(category);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: "category not found",
+      error: err.message,
     });
-  } else {
-    return res.status(201).json(category);
   }
 }
 
-function httpAddCategory(req, res) {
-  const category = { ...req.body, id: Math.floor(Math.random() * 1000) };
-  let errMsg = isCategoryValid(category);
-  if (errMsg) {
+async function httpAddCategory(req, res) {
+  try {
+    const addedCategory = await addNewCategory(req.body);
+    return res.status(201).json(addedCategory);
+  } catch (err) {
     return res.status(400).json({
-      error: errMsg,
+      error: err.message,
     });
-  } else {
-    addNewCategory(category);
-    return res.status(201).json(category);
   }
 }
 
-function httpUpdateCategory(req, res) {
-  const category = req.body;
-  if (!isCategoryExist(category.id)) {
+async function httpUpdateCategory(req, res) {
+  try {
+    const updatedCategory = await updateCategory(req.body);
+    if (!updatedCategory) {
+      return res.status(400).json({
+        error: "category not found",
+      });
+    } else {
+      return res.status(201).json(updatedCategory);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: "category not found",
+      error: err.message,
     });
-  }
-  let errMsg = isCategoryValid(category);
-  if (errMsg) {
-    return res.status(400).json({
-      error: errMsg,
-    });
-  } else {
-    updateCategory(category);
-    return res.status(201).json(category);
   }
 }
 
-function httpDeleteCategory(req, res) {
-  const categoryID = req.params.id;
-  const category = deleteCategory(Number(categoryID));
-  if (!category) {
+async function httpDeleteCategory(req, res) {
+  try {
+    const categoryID = req.params.id;
+    const category = await deleteCategory(categoryID);
+    if (!category) {
+      return res.status(400).json({
+        error: "category not found",
+      });
+    } else {
+      return res.status(201).json(category);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: "category not found",
+      error: err.message,
     });
-  } else {
-    return res.status(201).json(category);
   }
 }
 

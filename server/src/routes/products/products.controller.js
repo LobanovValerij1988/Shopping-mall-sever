@@ -4,66 +4,71 @@ const {
   deleteProduct,
   addNewProduct,
   updateProduct,
-  isProductExist,
 } = require("../../models/products.model");
-const { isProductValid } = require("./productValidator");
 
 async function httpGetAllProducts(req, res) {
   return res.status(200).json(await getAllProducts());
 }
 
-function httpAddProduct(req, res) {
-  const product = { ...req.body, id: Math.floor(Math.random() * 1000) };
-  let errMsg = isProductValid(product);
-  if (errMsg) {
+async function httpGetProductByID(req, res) {
+  try {
+    const product = await getProductByID(req.params.id);
+    if (!product) {
+      return res.status(400).json({
+        error: "product not found",
+      });
+    } else {
+      return res.status(201).json(product);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: errMsg,
+      error: err.message,
     });
-  } else {
-    addNewProduct(product);
-    return res.status(201).json(product);
   }
 }
 
-function httpUpdateProduct(req, res) {
-  const product = req.body;
-  if (!isProductExist(product.id)) {
+async function httpAddProduct(req, res) {
+  try {
+    const addedProduct = await addNewProduct(req.body);
+    return res.status(201).json(addedProduct);
+  } catch (err) {
     return res.status(400).json({
-      error: "product not found",
+      error: err.message,
     });
-  }
-  let errMsg = isProductValid(product);
-  if (errMsg) {
-    return res.status(400).json({
-      error: errMsg,
-    });
-  } else {
-    updateProduct(product);
-    return res.status(201).json(product);
   }
 }
 
-function httpGetProductByID(req, res) {
-  const { productID } = req.params;
-  const product = getProductByID(Number(productID));
-  if (!product) {
+async function httpUpdateProduct(req, res) {
+  try {
+    const updatedProduct = await updateProduct(req.body);
+    if (!updatedProduct) {
+      return res.status(400).json({
+        error: "product not found",
+      });
+    } else {
+      return res.status(201).json(updatedProduct);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: "product not found",
+      error: err.message,
     });
-  } else {
-    return res.status(201).json(product);
   }
 }
 
-function httpDeleteProduct(req, res) {
-  const productID = req.params.id;
-  const product = deleteProduct(Number(productID));
-  if (!product) {
+async function httpDeleteProduct(req, res) {
+  try {
+    const product = await deleteProduct(req.params.id);
+    if (!product) {
+      return res.status(400).json({
+        error: "product not found",
+      });
+    } else {
+      return res.status(201).json(product);
+    }
+  } catch (err) {
     return res.status(400).json({
-      error: "product not found",
+      error: err.message,
     });
-  } else {
-    return res.status(201).json(product);
   }
 }
 

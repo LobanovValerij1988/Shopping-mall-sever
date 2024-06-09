@@ -10,35 +10,44 @@ async function getAllProducts() {
     .exec();
 }
 
-function getProductByID(productID) {
-  return products.find((product) => product.id === productID);
+async function getProductByID(productID) {
+  return await products
+    .findById(productID, { __v: 0 })
+    .populate({
+      path: "category",
+      select: "name -_id",
+    })
+    .exec();
 }
 
-function isProductExist(productID) {
-  return products.some((product) => product.id === productID);
+async function addNewProduct(product) {
+  const productCreated = await products.create(product);
+  return await getProductByID(productCreated._id);
 }
 
-function deleteProduct(productID) {}
-
-function addNewProduct(product) {
-  products.push(product);
+async function deleteProduct(productID) {
+  return await products.findByIdAndDelete(productID);
 }
 
-function updateProduct(updatedProduct) {
-  products = products.map((product) => {
-    if (product.id === updatedProduct.id) {
-      return updatedProduct;
-    } else {
-      return product;
+async function updateProduct(updatedProduct) {
+  const { _id, ...otherFields } = updatedProduct;
+  const newlyCreatedProduct = await products.findByIdAndUpdate(
+    _id,
+    otherFields,
+    {
+      new: true,
+      runValidators: true,
+      select: {
+        __v: 0,
+      },
     }
-  });
+  );
+  return await getProductByID(newlyCreatedProduct._id);
 }
-
 module.exports = {
-  isProductExist,
-  updateProduct,
-  addNewProduct,
   getAllProducts,
   getProductByID,
+  addNewProduct,
+  updateProduct,
   deleteProduct,
 };
