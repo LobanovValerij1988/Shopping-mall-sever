@@ -5,7 +5,7 @@ async function getAllProducts() {
     .find({}, { __v: 0 })
     .populate({
       path: "category",
-      select: "name -_id",
+      select: "name",
     })
     .exec();
 }
@@ -15,7 +15,7 @@ async function getProductByID(productID) {
     .findById(productID, { __v: 0 })
     .populate({
       path: "category",
-      select: "name -_id",
+      select: "name",
     })
     .exec();
 }
@@ -44,6 +44,7 @@ async function updateProduct(updatedProduct) {
   );
   return await getProductByID(newlyCreatedProduct._id);
 }
+
 module.exports = {
   getAllProducts,
   getProductByID,

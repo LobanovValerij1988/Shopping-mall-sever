@@ -6,11 +6,13 @@ const {
   httpUpdateCategory,
   httpAddCategory,
   httpDeleteCategory,
+  httpTotalProductQuantityByCategory,
 } = require("./categories.controller");
 
 const categoriesRouter = express.Router();
 
 categoriesRouter.get("/", httpGetAllCategories);
+categoriesRouter.get("/products", httpTotalProductQuantityByCategory);
 categoriesRouter.get("/:id", httpGetCategoryByID);
 categoriesRouter.post("/", httpAddCategory);
 categoriesRouter.put("/", httpUpdateCategory);

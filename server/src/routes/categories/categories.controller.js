@@ -4,6 +4,7 @@ const {
   updateCategory,
   getCategoryByID,
   deleteCategory,
+  totalProductQuantityByCategory,
 } = require("../../models/categories.model");
 
 async function httpGetAllCategories(req, res) {
@@ -11,6 +12,7 @@ async function httpGetAllCategories(req, res) {
 }
 
 async function httpGetCategoryByID(req, res) {
+  console.log("here");
   try {
     const categoryID = req.params.id;
     const category = await getCategoryByID(categoryID);
@@ -19,7 +21,7 @@ async function httpGetCategoryByID(req, res) {
         error: "category not found",
       });
     } else {
-      return res.status(201).json(category);
+      return res.status(200).json(category);
     }
   } catch (err) {
     return res.status(400).json({
@@ -47,7 +49,7 @@ async function httpUpdateCategory(req, res) {
         error: "category not found",
       });
     } else {
-      return res.status(201).json(updatedCategory);
+      return res.status(200).json(updatedCategory);
     }
   } catch (err) {
     return res.status(400).json({
@@ -65,8 +67,18 @@ async function httpDeleteCategory(req, res) {
         error: "category not found",
       });
     } else {
-      return res.status(201).json(category);
+      return res.status(200).json(category);
     }
+  } catch (err) {
+    return res.status(400).json({
+      error: err.message,
+    });
+  }
+}
+
+async function httpTotalProductQuantityByCategory(req, res) {
+  try {
+    return res.status(200).json(await totalProductQuantityByCategory());
   } catch (err) {
     return res.status(400).json({
       error: err.message,
@@ -80,4 +92,5 @@ module.exports = {
   httpDeleteCategory,
   httpUpdateCategory,
   httpAddCategory,
+  httpTotalProductQuantityByCategory,
 };

@@ -29,10 +29,38 @@ async function updateCategory(updatedCategory) {
   });
 }
 
+//agregation function
+
+async function totalProductQuantityByCategory() {
+  return await categories.aggregate([
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "category",
+        as: "category",
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        productsInCategory: { $sum: "$category.quantity" },
+      },
+    },
+    {
+      $sort: {
+        productsInCategory: -1,
+      },
+    },
+  ]);
+}
+
 module.exports = {
   getAllCategories,
   getCategoryByID,
   addNewCategory,
   updateCategory,
   deleteCategory,
+  //afregation
+  totalProductQuantityByCategory,
 };
