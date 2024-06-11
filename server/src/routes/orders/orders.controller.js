@@ -5,6 +5,9 @@ const {
   bestSellingProducts,
   totalRevenueByDateRange,
 } = require("../../models/orders.model");
+
+const { updateProduct } = require("../../models/products.model");
+
 const { getProductByID } = require("../../models/products.model");
 const { getCustomer } = require("../../models/customers.model");
 
@@ -33,10 +36,17 @@ async function httpAddOrder(req, res) {
   try {
     const { products: orderedProducts } = req.body;
     const savingProducts = [];
-
     const buyer = await getCustomer(); //untill I add cuctomer to my front end
     for (orderedProduct of orderedProducts) {
       const productInDB = await getProductByID(orderedProduct.productId);
+
+      // subtract ordered product quantity from quatity in the store
+
+      await updateProduct({
+        _id: productInDB._id,
+        quantity: productInDB.quantity - orderedProduct.quantity,
+      });
+
       savingProducts.push({
         name: productInDB.name,
         price: productInDB.price,
@@ -47,6 +57,7 @@ async function httpAddOrder(req, res) {
       customer: buyer._id,
       products: savingProducts,
     });
+
     return res.status(201).json(addedOrder);
   } catch (err) {
     return res.status(400).json({

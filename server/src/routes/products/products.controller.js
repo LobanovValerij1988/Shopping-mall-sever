@@ -4,6 +4,7 @@ const {
   deleteProduct,
   addNewProduct,
   updateProduct,
+  getLowStockProductsWhichOrdered,
 } = require("../../models/products.model");
 
 async function httpGetAllProducts(req, res) {
@@ -18,7 +19,7 @@ async function httpGetProductByID(req, res) {
         error: "product not found",
       });
     } else {
-      return res.status(201).json(product);
+      return res.status(200).json(product);
     }
   } catch (err) {
     return res.status(400).json({
@@ -46,7 +47,7 @@ async function httpUpdateProduct(req, res) {
         error: "product not found",
       });
     } else {
-      return res.status(201).json(updatedProduct);
+      return res.status(200).json(updatedProduct);
     }
   } catch (err) {
     return res.status(400).json({
@@ -63,7 +64,28 @@ async function httpDeleteProduct(req, res) {
         error: "product not found",
       });
     } else {
-      return res.status(201).json(product);
+      return res.status(200).json(product);
+    }
+  } catch (err) {
+    return res.status(400).json({
+      error: err.message,
+    });
+  }
+}
+
+//agregation
+
+async function httpGetLowStockProducts(req, res) {
+  try {
+    const products = await getLowStockProductsWhichOrdered(
+      +req.params.quantityLimit
+    );
+    if (!products) {
+      return res.status(400).json({
+        error: "product not found",
+      });
+    } else {
+      return res.status(200).json(products);
     }
   } catch (err) {
     return res.status(400).json({
@@ -78,4 +100,5 @@ module.exports = {
   httpDeleteProduct,
   httpUpdateProduct,
   httpAddProduct,
+  httpGetLowStockProducts,
 };

@@ -29,7 +29,7 @@ async function updateCategory(updatedCategory) {
   });
 }
 
-//agregation function
+//aggregation function
 
 async function totalProductQuantityByCategory() {
   return await categories.aggregate([
@@ -61,6 +61,6 @@ module.exports = {
   addNewCategory,
   updateCategory,
   deleteCategory,
-  //afregation
+  //aggregation
   totalProductQuantityByCategory,
 };

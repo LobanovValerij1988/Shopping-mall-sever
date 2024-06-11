@@ -1,5 +1,6 @@
 const http = require("http");
 require("dotenv").config();
+
 const { connectToMongo } = require("./services/mongo");
 const { loadCategoriesFromSeed } = require("./models/categories.seed");
 const { loadCustomersFromSeed } = require("./models/customers.seed");

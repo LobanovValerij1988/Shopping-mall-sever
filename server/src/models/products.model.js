@@ -45,10 +45,32 @@ async function updateProduct(updatedProduct) {
   return await getProductByID(newlyCreatedProduct._id);
 }
 
+// agregate
+async function getLowStockProductsWhichOrdered(quantityLimit) {
+  return await products.aggregate([
+    //find products which quantity less than quantity limit
+    { $match: { quantity: { $lt: quantityLimit } } },
+    // find is this product were ordered
+    {
+      $lookup: {
+        from: "orders",
+        localField: "name",
+        foreignField: "products.name",
+        as: "productDetails",
+      },
+    },
+    // if productDetails is empty so this product wasn't ordered
+    { $match: { productDetails: { $ne: [] } } },
+    // and delete this field
+    { $unset: ["productDetails"] },
+  ]);
+}
+
 module.exports = {
   getAllProducts,
   getProductByID,
   addNewProduct,
   updateProduct,
   deleteProduct,
+  getLowStockProductsWhichOrdered,
 };
