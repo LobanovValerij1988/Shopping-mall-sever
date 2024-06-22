@@ -12,21 +12,27 @@ const { getProductByID } = require("../../models/products.model");
 const { getCustomer } = require("../../models/customers.model");
 
 async function httpGetAllOrders(req, res) {
-  res.status(200).json(await getAllOrders());
+  try {
+    res.status(200).json(await getAllOrders());
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
 }
 
 async function httpGetOrderByID(req, res) {
   try {
     const order = await getOrderByID(req.params.id);
     if (!order) {
-      return res.status(400).json({
+      return res.status(404).json({
         error: "order not found",
       });
     } else {
       return res.status(200).json(order);
     }
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: err.message,
     });
   }
@@ -60,18 +66,19 @@ async function httpAddOrder(req, res) {
 
     return res.status(201).json(addedOrder);
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: err.message,
     });
   }
 }
 
-//agregate
+//aggregate
 async function httpBestSellingProducts(req, res) {
   try {
+
     return res.status(200).json(await bestSellingProducts());
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: err.message,
     });
   }
@@ -79,13 +86,12 @@ async function httpBestSellingProducts(req, res) {
 
 async function httpTotalRevenueByDateRange(req, res) {
   try {
-    const { startDate, endDate } = req.params;
-    console.log(startDate, endDate);
+    console.log(req.query.startDate, req.query.endDate)
     return res
       .status(200)
-      .json(await totalRevenueByDateRange(startDate, endDate));
+      .json(await totalRevenueByDateRange(req.query.startDate, req.query.endDate));
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: err.message,
     });
   }

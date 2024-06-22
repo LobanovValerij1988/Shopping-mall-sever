@@ -11,11 +11,193 @@ const {
 
 const productsRouter = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - name
+ *         - quantity
+ *         - price
+ *         - category
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the category
+ *         name:
+ *           type: string
+ *           description: The product name
+ *         quantity:
+ *           type: integer
+ *           description: The quantity of product
+ *         price:
+ *           type: number
+ *           description: The product name
+ *         category:
+ *           type: string
+ *           description: The category id
+ *       example:
+ *         _id: cdytdytdydtdyd453
+ *         name: new product
+ *         quantity: 25
+ *         price: 10
+ *         category: sdw23fwefwe
+ *
+ *   parameters:
+ *     IdParam:
+ *       in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: string
+ *         description: The product id
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Products
+ *   description: The products managing API
+ */
+
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Returns the list of all products
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: The list of products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
+
 productsRouter.get("/", httpGetAllProducts);
-productsRouter.get("/lowStock/:quantityLimit", httpGetLowStockProducts);
+
+/**
+ * @swagger
+ * /products/lowStock:
+ *   get:
+ *     summary: Get the list of products that have been ordered but have a quantity less than you send in stock
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: lessThan
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *     responses:
+ *       200:
+ *         description: The list of low stock products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
+
+productsRouter.get("/lowStock/", httpGetLowStockProducts);
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   get:
+ *     summary: Get product by id
+ *     tags: [Products]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: The product description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: The product was not found
+ * */
+
 productsRouter.get("/:id", httpGetProductByID);
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     summary: Create new product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       201:
+ *         description: The product was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ */
 productsRouter.post("/", httpAddProduct);
-productsRouter.put("/", httpUpdateProduct);
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   put:
+ *     summary: Update  product by id
+ *     tags: [Products]
+ *     parameters:
+ *      - $ref: '#/components/parameters/IdParam'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       200:
+ *         description: The product was successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: The product was not found
+ */
+
+
+productsRouter.put("/:id", httpUpdateProduct);
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   delete:
+ *     summary: Delete product by id
+ *     tags: [Products]
+ *     parameters:
+ *      - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: deleted product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/product'
+ *       404:
+ *         description: The product was not found
+ *       500:
+ *         description: Server error
+ */
+
 productsRouter.delete("/:id", httpDeleteProduct);
 
 module.exports = productsRouter;

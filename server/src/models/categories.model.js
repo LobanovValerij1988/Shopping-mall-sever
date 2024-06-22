@@ -1,11 +1,11 @@
 const categories = require("./categories.mongo");
 
-async function getAllCategories() {
-  return await categories.find({}, { __v: 0 });
+function getAllCategories() {
+  return  categories.find({}, { __v: 0 });
 }
 
-async function getCategoryByID(categoryID) {
-  return await categories.findById(categoryID, "_id, name");
+function getCategoryByID(categoryID) {
+  return  categories.findById(categoryID, "_id, name");
 }
 
 async function addNewCategory(category) {
@@ -14,13 +14,13 @@ async function addNewCategory(category) {
   return otherFields;
 }
 
-async function deleteCategory(categoryID) {
-  return await categories.findByIdAndDelete(categoryID);
+function deleteCategory(categoryID) {
+  return  categories.findByIdAndDelete(categoryID);
 }
 
-async function updateCategory(updatedCategory) {
-  const { _id, ...otherFields } = updatedCategory;
-  return await categories.findByIdAndUpdate(_id, otherFields, {
+function updateCategory(categoryId, updatedCategory) {
+
+  return  categories.findByIdAndUpdate(categoryId, updatedCategory, {
     new: true,
     runValidators: true,
     select: {
@@ -31,8 +31,8 @@ async function updateCategory(updatedCategory) {
 
 //aggregation function
 
-async function totalProductQuantityByCategory() {
-  return await categories.aggregate([
+function totalProductQuantityByCategory() {
+  return  categories.aggregate([
     {
       $lookup: {
         from: "products",

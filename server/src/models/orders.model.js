@@ -1,34 +1,32 @@
 const orders = require("./orders.mongo");
 
-async function getAllOrders() {
-  return await orders
+function getAllOrders() {
+  return  orders
     .find({}, { __v: 0 })
     .populate({
       path: "customer",
       select: "nickName -_id",
     })
-    .exec();
 }
 
-async function getOrderByID(orderID) {
-  return await orders
+function getOrderByID(orderID) {
+  return  orders
     .findById(orderID, { __v: 0 })
     .populate({
       path: "customer",
       select: "nickName -_id",
     })
-    .exec();
 }
 
 async function addNewOrder(order) {
   const orderCreated = await orders.create(order);
-  return await getOrderByID(orderCreated._id);
+  return  getOrderByID(orderCreated._id);
 }
 
 // agregate
 
 async function bestSellingProducts() {
-  return await orders
+  return orders
     .aggregate([
       { $unwind: "$products" },
       {
@@ -40,12 +38,12 @@ async function bestSellingProducts() {
         },
       },
     ])
-    .sort({ totalSell: -1 })
+    .sort({ totalItemSell: -1 })
     .limit(5);
 }
 
-async function totalRevenueByDateRange(startDate, endDate) {
-  return await orders.aggregate([
+function totalRevenueByDateRange(startDate, endDate) {
+  return orders.aggregate([
     {
       $match: {
         orderDate: {
@@ -74,8 +72,11 @@ async function totalRevenueByDateRange(startDate, endDate) {
         totalRevenue: {
           $sum: { $sum: "$totalPrice" },
         },
-      },
+      }
     },
+    {
+      $unset: "_id"
+    }
   ]);
 }
 

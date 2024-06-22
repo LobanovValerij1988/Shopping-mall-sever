@@ -1,39 +1,36 @@
 const products = require("./products.mongo");
 
 async function getAllProducts() {
-  return await products
+  return  products
     .find({}, { __v: 0 })
     .populate({
       path: "category",
       select: "name",
     })
-    .exec();
 }
 
-async function getProductByID(productID) {
-  return await products
+function getProductByID(productID) {
+  return products
     .findById(productID, { __v: 0 })
     .populate({
       path: "category",
       select: "name",
     })
-    .exec();
 }
 
 async function addNewProduct(product) {
   const productCreated = await products.create(product);
-  return await getProductByID(productCreated._id);
+  return  getProductByID(productCreated._id);
 }
 
-async function deleteProduct(productID) {
-  return await products.findByIdAndDelete(productID);
+function deleteProduct(productID) {
+  return  products.findByIdAndDelete(productID);
 }
 
-async function updateProduct(updatedProduct) {
-  const { _id, ...otherFields } = updatedProduct;
+async function updateProduct(productId,updatedProduct) {
   const newlyCreatedProduct = await products.findByIdAndUpdate(
-    _id,
-    otherFields,
+      productId,
+      updatedProduct,
     {
       new: true,
       runValidators: true,
@@ -42,12 +39,12 @@ async function updateProduct(updatedProduct) {
       },
     }
   );
-  return await getProductByID(newlyCreatedProduct._id);
+  return  getProductByID(newlyCreatedProduct._id);
 }
 
 // agregate
-async function getLowStockProductsWhichOrdered(quantityLimit) {
-  return await products.aggregate([
+function getLowStockProductsWhichOrdered(quantityLimit) {
+  return  products.aggregate([
     //find products which quantity less than quantity limit
     { $match: { quantity: { $lt: quantityLimit } } },
     // find is this product were ordered
@@ -62,7 +59,7 @@ async function getLowStockProductsWhichOrdered(quantityLimit) {
     // if productDetails is empty so this product wasn't ordered
     { $match: { productDetails: { $ne: [] } } },
     // and delete this field
-    { $unset: ["productDetails"] },
+    { $unset: ["productDetails","__v"] },
   ]);
 }
 
