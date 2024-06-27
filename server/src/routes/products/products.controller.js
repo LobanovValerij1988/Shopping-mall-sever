@@ -1,5 +1,5 @@
 const {
-  getAllProducts,
+  getFilteredProducts,
   getProductByID,
   deleteProduct,
   addNewProduct,
@@ -7,9 +7,9 @@ const {
   getLowStockProductsWhichOrdered,
 } = require("../../models/products.model");
 
-async function httpGetAllProducts(req, res) {
+async function httpGetFilteredProducts(req, res) {
  try {
-   return res.status(200).json(await getAllProducts());
+   return res.status(200).json(await getFilteredProducts(req.query.filtersCategory, req.query.searchText));
  }
  catch (err) {
    return res.status(500).json({
@@ -97,7 +97,7 @@ async function httpGetLowStockProducts(req, res) {
 }
 
 module.exports = {
-  httpGetAllProducts,
+  httpGetFilteredProducts,
   httpGetProductByID,
   httpDeleteProduct,
   httpUpdateProduct,

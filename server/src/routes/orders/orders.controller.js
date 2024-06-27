@@ -86,7 +86,6 @@ async function httpBestSellingProducts(req, res) {
 
 async function httpTotalRevenueByDateRange(req, res) {
   try {
-    console.log(req.query.startDate, req.query.endDate)
     return res
       .status(200)
       .json(await totalRevenueByDateRange(req.query.startDate, req.query.endDate));

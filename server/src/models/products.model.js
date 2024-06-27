@@ -1,12 +1,20 @@
 const products = require("./products.mongo");
 
-async function getAllProducts() {
-  return  products
-    .find({}, { __v: 0 })
-    .populate({
-      path: "category",
-      select: "name",
-    })
+async function getFilteredProducts(filtersCategory, searchText) {
+
+    searchText= searchText === undefined ? "" : searchText;
+    let filteredProducts;
+    if(filtersCategory) {
+        filteredProducts = products.find({category:{$in:filtersCategory}}, { __v: 0 })
+    }
+    else{
+        filteredProducts = products.find({}, { __v: 0 })
+    }
+     return filteredProducts.find({name:{$regex:new RegExp("^"+ searchText, 'i')}}).populate({
+         path: "category",
+         select: "name",
+     })
+
 }
 
 function getProductByID(productID) {
@@ -64,7 +72,7 @@ function getLowStockProductsWhichOrdered(quantityLimit) {
 }
 
 module.exports = {
-  getAllProducts,
+  getFilteredProducts,
   getProductByID,
   addNewProduct,
   updateProduct,

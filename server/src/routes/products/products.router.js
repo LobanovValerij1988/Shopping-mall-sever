@@ -1,7 +1,7 @@
 const express = require("express");
 
 const {
-  httpGetAllProducts,
+  httpGetFilteredProducts,
   httpGetProductByID,
   httpDeleteProduct,
   httpAddProduct,
@@ -68,6 +68,19 @@ const productsRouter = express.Router();
  *   get:
  *     summary: Returns the list of all products
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: filtersCategory
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [ 6662e89551e6d9d81e9ecc4a , 6662e89551e6d9d81e9ecc3f ]
+ *       - in: query
+ *         name: searchText
+ *         schema:
+ *           type: string
+ *           example: cap
  *     responses:
  *       200:
  *         description: The list of products
@@ -79,7 +92,7 @@ const productsRouter = express.Router();
  *                 $ref: '#/components/schemas/Product'
  */
 
-productsRouter.get("/", httpGetAllProducts);
+productsRouter.get("/", httpGetFilteredProducts);
 
 /**
  * @swagger
