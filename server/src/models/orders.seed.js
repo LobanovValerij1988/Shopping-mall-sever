@@ -1,12 +1,12 @@
 const orders = require("./orders.mongo");
-const { getCustomer } = require("./customers.model");
+const { getUser } = require("./users.model");
 
 async function seedOrders() {
-  const customer = await getCustomer();
+  const customer = await getUser();
   const seedingOrders = [
     {
       products: [
-        { name: "snikers", quantity: 5, price: 5 },
+        { name: "snickers", quantity: 5, price: 5 },
         { name: "trainers", quantity: 1, price: 15 },
       ],
     },

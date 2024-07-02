@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const { connectToMongo } = require("./services/mongo");
 const { loadCategoriesFromSeed } = require("./models/categories.seed");
-const { loadCustomersFromSeed } = require("./models/customers.seed");
+const { loadUserFromSeed } = require("./models/users.seed");
 const { loadOrdersFromSeed } = require("./models/orders.seed");
 const { loadProductsFromSeed } = require("./models/products.seed");
 const app = require("./app");
@@ -14,7 +14,7 @@ const server = http.createServer(app);
 async function seeding() {
   await connectToMongo();
   await loadCategoriesFromSeed();
-  await loadCustomersFromSeed();
+  await loadUserFromSeed();
   await loadOrdersFromSeed();
   await loadProductsFromSeed();
 }

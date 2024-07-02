@@ -9,7 +9,7 @@ const productsRouter = require("./routes/products/products.router");
 const categoriesRouter = require("./routes/categories/categories.router");
 const ordersRouter = require("./routes/orders/orders.router");
 const { logger } = require("./services/logger");
-const { errorHandler } = require('./services/errorhandler');
+const { errorHandler } = require('./services/errorHandler');
 
 const app = express();
 

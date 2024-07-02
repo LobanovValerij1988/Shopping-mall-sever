@@ -9,7 +9,7 @@ const {
 const { updateProduct } = require("../../models/products.model");
 
 const { getProductByID } = require("../../models/products.model");
-const { getCustomer } = require("../../models/customers.model");
+const { getCustomer } = require("../../models/users.model");
 
 async function httpGetAllOrders(req, res) {
   try {
