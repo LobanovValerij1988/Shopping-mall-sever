@@ -1,32 +1,30 @@
 const categories = require("./categories.mongo");
+const products = require("./products.mongo");
 
 function getAllCategories() {
-  return  categories.find({}, { __v: 0 });
+  return  categories.find().lean().exec();
 }
 
 function getCategoryByID(categoryID) {
-  return  categories.findById(categoryID, "_id, name");
+  return  categories.findById(categoryID);
+}
+
+function getCategoryBy (categoryField){
+  return categories.findOne(categoryField).lean().exec();
 }
 
 async function addNewCategory(category) {
-  const categoryCerated = await categories.create(category);
-  const { __v, ...otherFields } = categoryCerated.toObject();
-  return otherFields;
+  return  categories.create(category);
+
 }
 
 function deleteCategory(categoryID) {
   return  categories.findByIdAndDelete(categoryID);
 }
 
-function updateCategory(categoryId, updatedCategory) {
-
-  return  categories.findByIdAndUpdate(categoryId, updatedCategory, {
-    new: true,
-    runValidators: true,
-    select: {
-      __v: 0,
-    },
-  });
+async function updateCategory( updatedCategory) {
+  await updatedCategory.save();
+  return  updatedCategory;
 }
 
 //aggregation function
@@ -58,6 +56,7 @@ function totalProductQuantityByCategory() {
 module.exports = {
   getAllCategories,
   getCategoryByID,
+  getCategoryBy,
   addNewCategory,
   updateCategory,
   deleteCategory,

@@ -1,19 +1,14 @@
 const users = require("./users.mongo");
+const {hash} = require("bcrypt");
 
 async function seedUsers() {
   let seedingUsers = [
-    { nickName: "Sergio", role: "user" },
-    { nickName: "Sang Chi", role: "admin" },
+    { nickName: "Sergio", roles: ["customer"], activeStatus: true, password: hash( "some kind") },
+    { nickName: "Sang Chin", roles: ["admin"], activeStatus: false, password: hash("password") },
   ];
   seedingUsers.forEach(async (seedingUser) => {
-    await users.updateOne(
-      { nickName: seedingUser.nickName },
-      { seedingUser },
-      {
-        upsert: true,
-      }
-    );
-  });
+    await users.create(seedingUser);
+    });
 }
 
 async function loadUserFromSeed() {

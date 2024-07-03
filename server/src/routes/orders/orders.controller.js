@@ -7,7 +7,6 @@ const {
 } = require("../../models/orders.model");
 
 const { updateProduct } = require("../../models/products.model");
-
 const { getProductByID } = require("../../models/products.model");
 const { getCustomer } = require("../../models/users.model");
 
@@ -41,11 +40,18 @@ async function httpGetOrderByID(req, res) {
 async function httpAddOrder(req, res) {
   try {
     const { products: orderedProducts } = req.body;
+    if(!Array.isArray(orderedProducts) || !orderedProducts.length){
+      return res.status(400).json({
+        error: "products field can not be empty",
+      });
+    }
     const savingProducts = [];
     const buyer = await getCustomer(); //untill I add cuctomer to my front end
     for (orderedProduct of orderedProducts) {
       const productInDB = await getProductByID(orderedProduct.productId);
-
+      if(!productInDB){
+        return;
+      }
       // subtract ordered product quantity from quatity in the store
 
       await updateProduct({

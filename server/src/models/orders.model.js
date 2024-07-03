@@ -2,25 +2,24 @@ const orders = require("./orders.mongo");
 
 function getAllOrders() {
   return  orders
-    .find({}, { __v: 0 })
+    .find()
     .populate({
       path: "customer",
       select: "nickName -_id",
-    })
+    }).exec();
 }
 
 function getOrderByID(orderID) {
   return  orders
-    .findById(orderID, { __v: 0 })
+    .findById(orderID)
     .populate({
       path: "customer",
       select: "nickName -_id",
-    })
+    }).exec();
 }
 
 async function addNewOrder(order) {
-  const orderCreated = await orders.create(order);
-  return  getOrderByID(orderCreated._id);
+  return   orders.create(order);
 }
 
 // agregate

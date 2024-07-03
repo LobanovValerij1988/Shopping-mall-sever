@@ -47,6 +47,15 @@ const options = {
             ".",
             "orders.router.js"
         ),
+        path.join(
+            __dirname,
+            "..",
+            "routes",
+            ".",
+            "users",
+            ".",
+            "users.router.js"
+        ),
     ],
 };
 

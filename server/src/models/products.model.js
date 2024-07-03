@@ -1,25 +1,28 @@
 const products = require("./products.mongo");
 
 async function getFilteredProducts(filtersCategory, searchText) {
-
     searchText= searchText === undefined ? "" : searchText;
     let filteredProducts;
     if(filtersCategory) {
-        filteredProducts = products.find({category:{$in:filtersCategory}}, { __v: 0 })
+        filteredProducts = products.find({category:{$in:filtersCategory}}, {});
     }
     else{
-        filteredProducts = products.find({}, { __v: 0 })
+        filteredProducts = products.find({}, {});
     }
      return filteredProducts.find({name:{$regex:new RegExp("^"+ searchText, 'i')}}).populate({
          path: "category",
          select: "name",
-     })
+     }).lean().exec();
 
+}
+
+function getProductBy (productField){
+    return products.findOne(productField).lean().exec();
 }
 
 function getProductByID(productID) {
   return products
-    .findById(productID, { __v: 0 })
+    .findById(productID, {})
     .populate({
       path: "category",
       select: "name",
@@ -27,30 +30,19 @@ function getProductByID(productID) {
 }
 
 async function addNewProduct(product) {
-  const productCreated = await products.create(product);
-  return  getProductByID(productCreated._id);
+   return products.create(product);
+}
+
+async function updateProduct(updatedProduct) {
+    await updatedProduct.save();
+    return  updatedProduct;
 }
 
 function deleteProduct(productID) {
-  return  products.findByIdAndDelete(productID);
+    return  products.findByIdAndDelete(productID);
 }
 
-async function updateProduct(productId,updatedProduct) {
-  const newlyCreatedProduct = await products.findByIdAndUpdate(
-      productId,
-      updatedProduct,
-    {
-      new: true,
-      runValidators: true,
-      select: {
-        __v: 0,
-      },
-    }
-  );
-  return  getProductByID(newlyCreatedProduct._id);
-}
-
-// agregate
+// aggregate
 function getLowStockProductsWhichOrdered(quantityLimit) {
   return  products.aggregate([
     //find products which quantity less than quantity limit
@@ -74,6 +66,7 @@ function getLowStockProductsWhichOrdered(quantityLimit) {
 module.exports = {
   getFilteredProducts,
   getProductByID,
+  getProductBy,
   addNewProduct,
   updateProduct,
   deleteProduct,

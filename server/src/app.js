@@ -8,6 +8,8 @@ const {swaggerSpecification} = require ("./services/svagger")
 const productsRouter = require("./routes/products/products.router");
 const categoriesRouter = require("./routes/categories/categories.router");
 const ordersRouter = require("./routes/orders/orders.router");
+const usersRouter = require("./routes/users/users.router");
+
 const { logger } = require("./services/logger");
 const { errorHandler } = require('./services/errorHandler');
 
@@ -28,6 +30,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/products", productsRouter);
 app.use("/categories", categoriesRouter);
 app.use("/orders", ordersRouter);
+app.use("/users", usersRouter);
+
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));

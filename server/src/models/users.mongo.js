@@ -13,12 +13,12 @@ const userSchema = new mongoose.Schema({
   roles: [{
     type: String,
     enum: { values: ["customer",'manager',"admin"], messages: "{VALUE} is not supported" },
-    default: "customer",
+    default: ["customer"],
   }],
-  activeStatus: [{
+  activeStatus: {
     type: Boolean,
     default: true,
-  }],
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
