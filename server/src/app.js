@@ -9,9 +9,10 @@ const productsRouter = require("./routes/products/products.router");
 const categoriesRouter = require("./routes/categories/categories.router");
 const ordersRouter = require("./routes/orders/orders.router");
 const usersRouter = require("./routes/users/users.router");
-
+const authRouter = require("./routes/auth/auth.router");
 const { logger } = require("./services/logger");
 const { errorHandler } = require('./services/errorHandler');
+
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
+app.use('/auth', authRouter);
 app.use("/products", productsRouter);
 app.use("/categories", categoriesRouter);
 app.use("/orders", ordersRouter);

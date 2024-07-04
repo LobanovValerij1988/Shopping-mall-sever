@@ -1,5 +1,5 @@
 const express = require("express");
-
+const verifyJWT = require("../../services/verifyJWT");
 const {
   httpGetAllOrders,
   httpGetOrderByID,
@@ -9,7 +9,7 @@ const {
 } = require("./orders.controller");
 
 const ordersRouter = express.Router();
-
+ordersRouter.use(verifyJWT);
 /**
  * @swagger
  * components:

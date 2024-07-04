@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyJWT = require("../../services/verifyJWT");
 const {
     httpGetAllUsers,
     httpGetUserByID,
@@ -77,8 +78,7 @@ const usersRouter = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-usersRouter.get("/", httpGetAllUsers);
-
+usersRouter.get("/", verifyJWT, httpGetAllUsers);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ usersRouter.get("/", httpGetAllUsers);
  *         description: The user was not found
  * */
 
-usersRouter.get("/:id", httpGetUserByID);
+usersRouter.get("/:id",verifyJWT ,httpGetUserByID);
 
 /**
  * @swagger
@@ -148,7 +148,7 @@ usersRouter.post('/', httpAddUser)
  *         description: The user was not found
  */
 
-usersRouter.put("/:id", httpUpdateUser);
+usersRouter.put("/:id", verifyJWT, httpUpdateUser);
 
 /**
  * @swagger
@@ -171,7 +171,6 @@ usersRouter.put("/:id", httpUpdateUser);
  *         description: Server error
  */
 
-usersRouter.delete("/:id", httpDeleteUser);
-
+usersRouter.delete("/:id", verifyJWT, httpDeleteUser);
 
 module.exports = usersRouter;

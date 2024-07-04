@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyJWT = require("../../services/verifyJWT");
 
 const {
   httpGetAllCategories,
@@ -10,7 +11,7 @@ const {
 } = require("./categories.controller");
 
 const categoriesRouter = express.Router();
-
+categoriesRouter.use(verifyJWT);
 /**
  * @swagger
  * components:
