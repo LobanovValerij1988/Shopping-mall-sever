@@ -4,7 +4,7 @@ function getAllOrders() {
   return  orders
     .find()
     .populate({
-      path: "customer",
+      path: "user",
       select: "nickName -_id",
     }).exec();
 }
@@ -13,7 +13,7 @@ function getOrderByID(orderID) {
   return  orders
     .findById(orderID)
     .populate({
-      path: "customer",
+      path: "user",
       select: "nickName -_id",
     }).exec();
 }
@@ -22,7 +22,7 @@ async function addNewOrder(order) {
   return   orders.create(order);
 }
 
-// agregate
+// aggregate
 
 async function bestSellingProducts() {
   return orders

@@ -66,10 +66,9 @@ async function httpAddUser(req, res) {
 async function httpUpdateUser(req, res) {
     try {
         const id = req.params.id;
-        const { nickName, password, roles, activeStatus } = req.body
-
+        const { nickName, password, roles, activeStatus } = req.body;
         if( !nickName || !Array.isArray(roles) || !roles.length || !id ||
-            typeof  activeStatus !== "boolean") {
+            typeof  activeStatus !== 'boolean') {
             return res.status(400).json({message: 'All fields are required'})
         }
 
@@ -85,7 +84,7 @@ async function httpUpdateUser(req, res) {
         }
         user.nickName = nickName;
         user.roles = roles;
-        user.active = activeStatus;
+        user.activeStatus = activeStatus;
          if(password) {
              user.password = await hash(password,10)
          }

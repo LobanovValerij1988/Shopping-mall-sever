@@ -30,12 +30,13 @@ function getProductByID(productID) {
 }
 
 async function addNewProduct(product) {
-   return products.create(product);
+  const savedProduct = await products.create(product);
+   return  getProductByID(savedProduct._id);
 }
 
 async function updateProduct(updatedProduct) {
     await updatedProduct.save();
-    return  updatedProduct;
+    return  getProductByID(updatedProduct._id);
 }
 
 function deleteProduct(productID) {

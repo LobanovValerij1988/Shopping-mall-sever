@@ -22,10 +22,10 @@ const productSchema = new mongoose.Schema(
 );
 
 const orderSchema = new mongoose.Schema({
-  customer: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Customer",
-    required: [true, "customer is the necessary field"],
+    ref: "User",
+    required: [true, "user is the necessary field"],
   },
   orderDate: {
     type: Date,
