@@ -6,14 +6,13 @@ const verifyJWT = async (req, res, next) => {
   if(!authHeader?.startsWith('Bearer ')) {
       return res.status(401).send('Not authorized');
   }
-
   const token = authHeader.split(' ')[1];
-
   jwt.verify(
         token,
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN_SECRET,
         async (err, decodedToken) => {
             if(err) {
+                console.log(err);
                 return res.status(403).send({message: 'Forbidden'});
             }
             req.nickName = decodedToken.UserInfo.nickName;

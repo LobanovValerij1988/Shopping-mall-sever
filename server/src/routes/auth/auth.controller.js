@@ -18,9 +18,7 @@ async function login(req, res) {
   if(!foundUser || !foundUser.activeStatus){
       return res.status(401).send({message: 'Unauthorized'});
   }
-
-  const  isPaswordsMatch = bcrypt.compare(password, foundUser.password);
-
+  const  isPaswordsMatch = await bcrypt.compare(password, foundUser.password);
   if(!isPaswordsMatch){
       return res.status(401).send({message: 'Unauthorized'})
   }
@@ -32,7 +30,7 @@ async function login(req, res) {
           }
       },
       process.env.ACCESS_TOKEN_SECRET,
-      {expiresIn: "10s"}
+      {expiresIn: "5m"}
   );
 
   const refreshToken = jwt.sign(
@@ -56,7 +54,7 @@ async function login(req, res) {
 // @access Public
 async function refresh(req, res) {
   const cookies = req.cookies;
-
+ console.log(cookies)
   if(!cookies?.jwt){
       return res.statusCode(401).json({message: 'Unauthorized'});
   }
@@ -84,7 +82,7 @@ async function refresh(req, res) {
                   }
               },
               process.env.ACCESS_TOKEN_SECRET,
-              {expiresIn: "10s"}
+              {expiresIn: "5m"}
           );
 
           res.json({accessToken});
