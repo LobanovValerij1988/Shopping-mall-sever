@@ -54,9 +54,8 @@ async function login(req, res) {
 // @access Public
 async function refresh(req, res) {
   const cookies = req.cookies;
- console.log(cookies)
   if(!cookies?.jwt){
-      return res.statusCode(401).json({message: 'Unauthorized'});
+      return res.status(401).json({message: 'Unauthorized'});
   }
 
   const refreshToken = cookies.jwt;
