@@ -10,7 +10,7 @@ const {
 } = require("./products.controller");
 
 const productsRouter = express.Router();
-// productsRouter.use(verifyJWT);
+  productsRouter.use(verifyJWT);
 /**
  * @swagger
  * components:

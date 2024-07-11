@@ -30,22 +30,20 @@ async function login(req, res) {
           }
       },
       process.env.ACCESS_TOKEN_SECRET,
-      {expiresIn: "5m"}
+      {expiresIn: "30s"}
   );
 
   const refreshToken = jwt.sign(
       { "nickName": foundUser.nickName },
       process.env.REFRESH_TOKEN_SECRET,
-      {expiresIn: "1d"}
+      {expiresIn: "60s"}
   )
-
   res.cookie('jwt',refreshToken,{
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      // secure: true,
+      // sameSite: 'None',
       maxAge: 24*60*60*1000
   });
-
   res.json({accessToken})
 }
 
@@ -81,7 +79,7 @@ async function refresh(req, res) {
                   }
               },
               process.env.ACCESS_TOKEN_SECRET,
-              {expiresIn: "5m"}
+              {expiresIn: "30s"}
           );
 
           res.json({accessToken});

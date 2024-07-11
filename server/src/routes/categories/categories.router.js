@@ -11,7 +11,7 @@ const {
 } = require("./categories.controller");
 
 const categoriesRouter = express.Router();
-// categoriesRouter.use(verifyJWT);
+ categoriesRouter.use(verifyJWT);
 /**
  * @swagger
  * components:
