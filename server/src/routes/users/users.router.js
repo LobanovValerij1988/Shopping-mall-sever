@@ -7,6 +7,7 @@ const {
     httpUpdateUser,
     httpDeleteUser
 } = require("./users.controller");
+const {forAdminOnly} = require("../../middleware/accessMidleware");
 
 const usersRouter = express.Router();
 
@@ -78,8 +79,7 @@ const usersRouter = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-usersRouter.get("/", verifyJWT, httpGetAllUsers);
-
+usersRouter.get("/", verifyJWT, forAdminOnly, httpGetAllUsers);
 /**
  * @swagger
  * /users/{id}:
@@ -99,7 +99,7 @@ usersRouter.get("/", verifyJWT, httpGetAllUsers);
  *         description: The user was not found
  * */
 
-usersRouter.get("/:id",verifyJWT ,httpGetUserByID);
+usersRouter.get("/:id",verifyJWT, forAdminOnly, httpGetUserByID);
 
 /**
  * @swagger
@@ -148,7 +148,7 @@ usersRouter.post('/', httpAddUser)
  *         description: The user was not found
  */
 
-usersRouter.put("/:id", verifyJWT, httpUpdateUser);
+usersRouter.put("/:id", verifyJWT, forAdminOnly, httpUpdateUser);
 
 /**
  * @swagger
@@ -171,6 +171,6 @@ usersRouter.put("/:id", verifyJWT, httpUpdateUser);
  *         description: Server error
  */
 
-usersRouter.delete("/:id", verifyJWT, httpDeleteUser);
+usersRouter.delete("/:id", verifyJWT, forAdminOnly, httpDeleteUser);
 
 module.exports = usersRouter;

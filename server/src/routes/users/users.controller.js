@@ -7,6 +7,7 @@ const {
     deleteUser
 } = require("../../models/users.model");
 const {hash} = require("bcrypt");
+const {createAccessToken} = require("../../helpers/jwtHelpers");
 
 async function httpGetAllUsers(req, res) {
     try {
@@ -37,24 +38,31 @@ async function httpGetUserByID(req, res) {
 
 async function httpAddUser(req, res) {
     try {
-        const {nickName, password, roles} = req.body;
-        if(!nickName || !password || !Array.isArray(roles) || !roles.length) {
+        const {nickName, password,  passwordConfirmed } = req.body;
+        if(!nickName || !password ) {
             return res.status(400).json({message: 'All fields are required'})
+        }
+
+        if(password !== passwordConfirmed )  {
+            return res.status(400).send({
+                error: "Password does not match password required"
+            })
         }
         const duplicate = await getUserBy({nickName})
         if(duplicate){
-            return res.status(409).json({message: 'Duplicate username'})
+            return res.status(409).json({error: 'Duplicate username'})
         }
         if(password.length < 3){
-            return res.status(400).json({message: 'Password should be longer that 3'})
+            return res.status(400).json({error: 'Password should be longer that 3'})
         }
         const hashedPwd = await hash(password, 10)
-        const user = await addNewUser({nickName, password:hashedPwd, roles})
+        const user = await addNewUser({nickName, password:hashedPwd, roles:["customer"], activeStatus: true})
         if(user){
-            return res.status(201).json(user);
+            const accessToken = await createAccessToken(res, user);
+            res.json({accessToken})
         }
         else {
-            res.status(400).json({message: 'Invalid user data received'});
+            res.status(400).json({error: 'Invalid user data received'});
         }
     } catch (err) {
         return res.status(500).json({
@@ -69,18 +77,18 @@ async function httpUpdateUser(req, res) {
         const { nickName, password, roles, activeStatus } = req.body;
         if( !nickName || !Array.isArray(roles) || !roles.length || !id ||
             typeof  activeStatus !== 'boolean') {
-            return res.status(400).json({message: 'All fields are required'})
+            return res.status(400).json({error: 'All fields are required'})
         }
 
         const user = await getUserById(id);
 
         if(!user){
-            return res.status(404).json({message: 'User was not found'});
+            return res.status(404).json({error: 'User was not found'});
         }
 
         const duplicate = await getUserBy({nickName})
         if(duplicate && duplicate?._id.toString() !== id){
-            return res.status(409).json({message: 'Duplicate username'})
+            return res.status(409).json({error: 'Duplicate username'})
         }
         user.nickName = nickName;
         user.roles = roles;

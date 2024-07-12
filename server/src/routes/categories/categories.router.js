@@ -9,6 +9,7 @@ const {
   httpDeleteCategory,
   httpTotalProductQuantityByCategory,
 } = require("./categories.controller");
+const {forManagerOnly} = require("../../middleware/accessMidleware");
 
 const categoriesRouter = express.Router();
  categoriesRouter.use(verifyJWT);
@@ -139,7 +140,7 @@ categoriesRouter.get("/:id", httpGetCategoryByID);
  *       500:
  *         description: Server error
  */
-categoriesRouter.post("/", httpAddCategory);
+categoriesRouter.post("/", forManagerOnly, httpAddCategory);
 
 /**
  * @swagger
@@ -168,7 +169,7 @@ categoriesRouter.post("/", httpAddCategory);
  *         description: Server error
  */
 
-categoriesRouter.put("/:id", httpUpdateCategory);
+categoriesRouter.put("/:id", forManagerOnly, httpUpdateCategory);
 
 /**
  * @swagger
@@ -191,7 +192,7 @@ categoriesRouter.put("/:id", httpUpdateCategory);
  *         description: Server error
  */
 
-categoriesRouter.delete("/:id", httpDeleteCategory);
+categoriesRouter.delete("/:id",  forManagerOnly, httpDeleteCategory);
 
 
 module.exports = categoriesRouter;

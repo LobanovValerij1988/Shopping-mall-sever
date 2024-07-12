@@ -7,9 +7,10 @@ const {
   httpBestSellingProducts,
   httpTotalRevenueByDateRange,
 } = require("./orders.controller");
+const {forManagerOnly} = require("../../middleware/accessMidleware");
 
 const ordersRouter = express.Router();
-ordersRouter.use(verifyJWT);
+ordersRouter.use(verifyJWT,forManagerOnly);
 /**
  * @swagger
  * components:

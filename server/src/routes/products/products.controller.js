@@ -41,15 +41,15 @@ async function httpAddProduct(req, res) {
   try {
     const {name, quantity, price, category} = req.body;
     if(!name || !quantity || !price || !category) {
-      return res.status(400).json({message: 'All fields are required'})
+      return res.status(400).json({error: 'All fields are required'})
     }
     const duplicate = await getProductBy({name})
     if(duplicate){
-      return res.status(409).json({message: 'Duplicate product name'})
+      return res.status(409).json({error: 'Duplicate product name'})
     }
     const existingCategory =  await getCategoryByID(category);
     if(!existingCategory){
-      return res.status(409).json({message: 'Category is not exist'})
+      return res.status(409).json({error: 'Category is not exist'})
     }
     const addedProduct = await addNewProduct(req.body);
     return res.status(201).json(addedProduct);
@@ -65,23 +65,23 @@ async function httpUpdateProduct(req, res) {
     const id = req.params.id;
     const {name, quantity, price, category} = req.body;
     if(!name || !quantity || !price || !category) {
-      return res.status(400).json({message: 'All fields are required'})
+      return res.status(400).json({error: 'All fields are required'})
     }
 
     const product = await getProductByID(id);
     if(!product){
-      return res.status(404).json({message: 'Product was not found'});
+      return res.status(404).json({error: 'Product was not found'});
     }
 
     const duplicate = await getProductBy({name});
 
     if(duplicate && duplicate?._id.toString() !== id){
-      return res.status(409).json({message: 'Duplicate product name'})
+      return res.status(409).json({error: 'Duplicate product name'})
     }
 
     const categoryExist = await getCategoryByID(category);
     if(!categoryExist){
-      return res.status(404).json({message: 'Category is not exist'});
+      return res.status(404).json({error: 'Category is not exist'});
     }
 
     product.name = name;

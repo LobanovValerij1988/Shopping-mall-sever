@@ -8,6 +8,7 @@ const {
   httpUpdateProduct,
   httpGetLowStockProducts,
 } = require("./products.controller");
+const {forManagerOnly} = require("../../middleware/accessMidleware");
 
 const productsRouter = express.Router();
   productsRouter.use(verifyJWT);
@@ -160,7 +161,7 @@ productsRouter.get("/:id", httpGetProductByID);
  *             schema:
  *               $ref: '#/components/schemas/Product'
  */
-productsRouter.post("/", httpAddProduct);
+productsRouter.post("/",forManagerOnly ,httpAddProduct);
 
 /**
  * @swagger
@@ -188,7 +189,7 @@ productsRouter.post("/", httpAddProduct);
  */
 
 
-productsRouter.put("/:id", httpUpdateProduct);
+productsRouter.put("/:id", forManagerOnly, httpUpdateProduct);
 
 /**
  * @swagger
@@ -211,6 +212,6 @@ productsRouter.put("/:id", httpUpdateProduct);
  *         description: Server error
  */
 
-productsRouter.delete("/:id", httpDeleteProduct);
+productsRouter.delete("/:id", forManagerOnly, httpDeleteProduct);
 
 module.exports = productsRouter;

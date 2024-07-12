@@ -4,10 +4,14 @@ const loginLimiter = require('../../services/loginLimiter');
 const {
     login,
     refresh,
-    logout
+    logout,
 } = require('./auth.controller')
+const {httpAddUser} = require("../users/users.controller");
+
 
 authRouter.post('/', loginLimiter,login);
+
+authRouter.post('/signUp', httpAddUser);
 
 authRouter.get('/refresh',refresh);
 
