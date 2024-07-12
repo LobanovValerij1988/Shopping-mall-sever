@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const { getUserBy} = require("../../models/users.model");
+const {createAccessToken} = require("../../helpers/jwtHelpers");
 
 // @desc Login
 // @route POST /auth
