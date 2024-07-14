@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const { getUserBy} = require("../../models/users.model");
-const {createAccessToken} = require("../../helpers/jwtHelpers");
+const {userAuth, createAccessToken} = require("../../helpers/jwtHelpers");
 
 // @desc Login
 // @route POST /auth
@@ -23,7 +23,7 @@ async function login(req, res) {
   if(!isPaswordsMatch){
       return res.status(401).send({error: 'Unauthorized'})
   }
-  const accessToken = await createAccessToken(res, foundUser);
+  const accessToken = await userAuth(res, foundUser);
   res.json({accessToken})
 }
 
@@ -44,7 +44,7 @@ async function refresh(req, res) {
       process.env.REFRESH_TOKEN_SECRET,
       async (err, decodedToken) => {
           if(err) {
-              return res.status(403).send({error: 'Forbidden'});
+              return res.status(401).send({error: 'Forbidden'});
           }
           const foundUser = await getUserBy({nickName: decodedToken.nickName});
 
@@ -52,16 +52,7 @@ async function refresh(req, res) {
               return res.status(401).json({error: 'Unauthorized'});
           }
 
-          const accessToken = await jwt.sign(
-              {
-                  "UserInfo": {
-                      "nickName": foundUser.nickName,
-                      "roles": foundUser.roles
-                  }
-              },
-              process.env.ACCESS_TOKEN_SECRET,
-              {expiresIn: "30s"}
-          );
+          const accessToken = await createAccessToken(foundUser)
 
           res.json({accessToken});
       }
