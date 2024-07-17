@@ -24,7 +24,7 @@ async function login(req, res) {
       return res.status(401).send({error: 'Unauthorized'})
   }
   const accessToken = await userAuth(res, foundUser);
-  res.json({accessToken})
+  res.status(200).json({accessToken})
 }
 
 // @desc Refresh

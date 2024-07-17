@@ -31,6 +31,13 @@ const categoriesRouter = express.Router();
  *       example:
  *         _id: cdytdytdydtdyd453
  *         name: new category
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *       required:
+ *         - error
  *   parameters:
  *     IdParam:
  *       in: path
@@ -39,6 +46,31 @@ const categoriesRouter = express.Router();
  *       schema:
  *         type: string
  *         description: The category id
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Forbidden:
+ *       description: access forbidden
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Duplicate:
+ *       description: duplicate category name
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     notFound:
+ *       description: category was not found
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
  */
 
 /**
@@ -53,6 +85,8 @@ const categoriesRouter = express.Router();
  * /categories:
  *   get:
  *     summary: Returns the list of all categories
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Categories]
  *     responses:
  *       200:
@@ -63,6 +97,8 @@ const categoriesRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Category'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 categoriesRouter.get("/", httpGetAllCategories);
@@ -72,6 +108,8 @@ categoriesRouter.get("/", httpGetAllCategories);
  * /categories/getTotalProductsByCategory:
  *   get:
  *     summary: Get the total quantity of products for each category.
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Categories]
  *     responses:
  *       200:
@@ -102,6 +140,8 @@ categoriesRouter.get("/getTotalProductsByCategory", httpTotalProductQuantityByCa
  * /categories/{id}:
  *   get:
  *     summary: Get category by id
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Categories]
  *     parameters:
  *       - $ref: '#/components/parameters/IdParam'
@@ -113,9 +153,9 @@ categoriesRouter.get("/getTotalProductsByCategory", httpTotalProductQuantityByCa
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       404:
- *         description: The category was not found
- *       500:
- *         description:
+ *         $ref: '#/components/responses/notFound'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  * */
 categoriesRouter.get("/:id", httpGetCategoryByID);
 /**
@@ -123,6 +163,9 @@ categoriesRouter.get("/:id", httpGetCategoryByID);
  * /categories:
  *   post:
  *     summary: Create new category
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Categories]
  *     requestBody:
  *       required: true
@@ -137,8 +180,12 @@ categoriesRouter.get("/:id", httpGetCategoryByID);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Category'
- *       500:
- *         description: Server error
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       409:
+ *         $ref: '#/components/responses/Duplicate'
  */
 categoriesRouter.post("/", forManagerOnly, httpAddCategory);
 
@@ -147,6 +194,9 @@ categoriesRouter.post("/", forManagerOnly, httpAddCategory);
  * /categories/{id}:
  *   put:
  *     summary: Update  category by id
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Categories]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -164,9 +214,11 @@ categoriesRouter.post("/", forManagerOnly, httpAddCategory);
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       404:
- *         description: The category was not found
- *       500:
- *         description: Server error
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       409:
+ *         $ref: '#/components/responses/Duplicate'
  */
 
 categoriesRouter.put("/:id", forManagerOnly, httpUpdateCategory);
@@ -176,6 +228,9 @@ categoriesRouter.put("/:id", forManagerOnly, httpUpdateCategory);
  * /categories/{id}:
  *   delete:
  *     summary: Delete category by id
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Categories]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -187,9 +242,9 @@ categoriesRouter.put("/:id", forManagerOnly, httpUpdateCategory);
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       404:
- *         description: The category was not found
- *       500:
- *         description: Server error
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 categoriesRouter.delete("/:id",  forManagerOnly, httpDeleteCategory);

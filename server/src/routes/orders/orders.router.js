@@ -50,7 +50,14 @@ ordersRouter.use(verifyJWT,forManagerOnly);
  *             quantity: 5
  *           - productId: dasdas
  *             quantity: 12
-  *   parameters:
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *       required:
+ *         - error
+ *   parameters:
  *     IdParam:
  *       in: path
  *       name: id
@@ -58,6 +65,25 @@ ordersRouter.use(verifyJWT,forManagerOnly);
  *       schema:
  *         type: string
  *         description: The order id
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Forbidden:
+ *       description: access forbidden
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     notFound:
+ *       description: order was not found
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
  */
 
 /**
@@ -72,6 +98,9 @@ ordersRouter.use(verifyJWT,forManagerOnly);
  * /orders:
  *   get:
  *     summary: Returns the list of all orders
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Orders]
  *     responses:
  *       200:
@@ -82,6 +111,10 @@ ordersRouter.use(verifyJWT,forManagerOnly);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Order'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 ordersRouter.get("/", httpGetAllOrders);
 
@@ -90,6 +123,9 @@ ordersRouter.get("/", httpGetAllOrders);
 * /orders/bestSellingProducts:
 *   get:
 *     summary: Get the top 5 best-selling products based on order quantities
+*     security:
+*       - bearerAuth:
+*           - manager
 *     tags: [Orders]
 *     responses:
 *       200:
@@ -107,6 +143,10 @@ ordersRouter.get("/", httpGetAllOrders);
 *                   totalItemSell:
 *                     type: integer
 *                     description: All items were sold for all time
+*       401:
+*         $ref: '#/components/responses/Unauthorized'
+*       403:
+*         $ref: '#/components/responses/Forbidden'
 */
 
 ordersRouter.get("/bestSellingProducts", httpBestSellingProducts);
@@ -116,6 +156,9 @@ ordersRouter.get("/bestSellingProducts", httpBestSellingProducts);
  * /orders/revenueByRangeDate:
  *   get:
  *     summary: Get the total revenue generated from orders placed within a specific date range.
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Orders]
  *     parameters:
  *       - in: query
@@ -137,6 +180,10 @@ ordersRouter.get("/bestSellingProducts", httpBestSellingProducts);
  *           application/json:
  *             schema:
  *               type: number
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 ordersRouter.get(
@@ -148,6 +195,9 @@ ordersRouter.get(
  * /orders/{id}:
  *   get:
  *     summary: Get order by id
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Orders]
  *     parameters:
  *       - $ref: '#/components/parameters/IdParam'
@@ -158,8 +208,12 @@ ordersRouter.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: The order was not found
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  * */
 ordersRouter.get("/:id", httpGetOrderByID);
 /**
@@ -167,6 +221,8 @@ ordersRouter.get("/:id", httpGetOrderByID);
  * /orders:
  *   post:
  *     summary: Create new order
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Orders]
  *     requestBody:
  *       required: true
@@ -181,6 +237,8 @@ ordersRouter.get("/:id", httpGetOrderByID);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 ordersRouter.post("/", httpAddOrder);
 

@@ -45,7 +45,38 @@ const productsRouter = express.Router();
  *         quantity: 25
  *         price: 10
  *         category: sdw23fwefwe
- *
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *       required:
+ *         - error
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Forbidden:
+ *       description: access forbidden
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Duplicate:
+ *       description: duplicate product name or Category is not exist
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     notFound:
+ *       description: product was not found
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
  *   parameters:
  *     IdParam:
  *       in: path
@@ -68,6 +99,8 @@ const productsRouter = express.Router();
  * /products:
  *   get:
  *     summary: Returns the list of all products
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Products]
  *     parameters:
  *       - in: query
@@ -91,6 +124,8 @@ const productsRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Product'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 productsRouter.get("/", httpGetFilteredProducts);
@@ -100,6 +135,8 @@ productsRouter.get("/", httpGetFilteredProducts);
  * /products/lowStock:
  *   get:
  *     summary: Get the list of products that have been ordered but have a quantity less than you send in stock
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Products]
  *     parameters:
  *       - in: query
@@ -117,6 +154,8 @@ productsRouter.get("/", httpGetFilteredProducts);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Product'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 productsRouter.get("/lowStock/", httpGetLowStockProducts);
@@ -126,6 +165,8 @@ productsRouter.get("/lowStock/", httpGetLowStockProducts);
  * /products/{id}:
  *   get:
  *     summary: Get product by id
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Products]
  *     parameters:
  *       - $ref: '#/components/parameters/IdParam'
@@ -137,7 +178,9 @@ productsRouter.get("/lowStock/", httpGetLowStockProducts);
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       404:
- *         description: The product was not found
+ *         $ref: '#/components/responses/notFound'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  * */
 
 productsRouter.get("/:id", httpGetProductByID);
@@ -146,6 +189,9 @@ productsRouter.get("/:id", httpGetProductByID);
  * /products:
  *   post:
  *     summary: Create new product
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Products]
  *     requestBody:
  *       required: true
@@ -160,6 +206,12 @@ productsRouter.get("/:id", httpGetProductByID);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       409:
+ *         $ref: '#/components/responses/Duplicate'
  */
 productsRouter.post("/",forManagerOnly ,httpAddProduct);
 
@@ -168,6 +220,9 @@ productsRouter.post("/",forManagerOnly ,httpAddProduct);
  * /products/{id}:
  *   put:
  *     summary: Update  product by id
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Products]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -184,8 +239,14 @@ productsRouter.post("/",forManagerOnly ,httpAddProduct);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: The product was not found
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       409:
+ *         $ref: '#/components/responses/Duplicate'
  */
 
 
@@ -196,6 +257,9 @@ productsRouter.put("/:id", forManagerOnly, httpUpdateProduct);
  * /products/{id}:
  *   delete:
  *     summary: Delete product by id
+ *     security:
+ *       - bearerAuth:
+ *           - manager
  *     tags: [Products]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -205,11 +269,11 @@ productsRouter.put("/:id", forManagerOnly, httpUpdateProduct);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/product'
+ *               $ref: '#/components/schemas/Product'
  *       404:
- *         description: The product was not found
- *       500:
- *         description: Server error
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 productsRouter.delete("/:id", forManagerOnly, httpDeleteProduct);

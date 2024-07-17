@@ -59,7 +59,7 @@ async function httpAddUser(req, res) {
         const user = await addNewUser({nickName, password:hashedPwd, roles:["customer"], activeStatus: true})
         if(user){
             const accessToken = await createAccessToken(res, user);
-            res.json({accessToken})
+            res.status(201).json({accessToken})
         }
         else {
             res.status(400).json({error: 'Invalid user data received'});

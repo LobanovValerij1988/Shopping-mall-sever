@@ -18,6 +18,20 @@ const options = {
                 url: URL + PORT,
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    scopes: {
+                        admin: 'Admin access',
+                        manager: 'Manager access',
+                        customer: 'Customer access',
+                    },
+                },
+            },
+        },
     },
     apis: [
         path.join(
@@ -55,6 +69,15 @@ const options = {
             "users",
             ".",
             "users.router.js"
+        ),
+        path.join(
+            __dirname,
+            "..",
+            "routes",
+            ".",
+            "auth",
+            ".",
+            "auth.router.js"
         ),
     ],
 };

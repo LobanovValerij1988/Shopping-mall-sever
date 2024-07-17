@@ -46,6 +46,13 @@ const usersRouter = express.Router();
  *         activeStatus: true
  *         roles:
  *           - customer
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *       required:
+ *         - error
  *   parameters:
  *     IdParam:
  *       in: path
@@ -54,6 +61,25 @@ const usersRouter = express.Router();
  *       schema:
  *         type: string
  *         description: The user id
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *     Forbidden:
+ *       description: access forbidden
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *       notFound:
+ *         description: user was not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 
 /**
@@ -68,6 +94,9 @@ const usersRouter = express.Router();
  * /users:
  *   get:
  *     summary: Returns the list of all users
+ *     security:
+ *       - bearerAuth:
+ *           - admin
  *     tags: [Users]
  *     responses:
  *       200:
@@ -78,6 +107,10 @@ const usersRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/User'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 usersRouter.get("/", verifyJWT, forAdminOnly, httpGetAllUsers);
 /**
@@ -85,6 +118,9 @@ usersRouter.get("/", verifyJWT, forAdminOnly, httpGetAllUsers);
  * /users/{id}:
  *   get:
  *     summary: Get user by id
+ *     security:
+ *       - bearerAuth:
+ *           - admin
  *     tags: [Users]
  *     parameters:
  *       - $ref: '#/components/parameters/IdParam'
@@ -95,39 +131,24 @@ usersRouter.get("/", verifyJWT, forAdminOnly, httpGetAllUsers);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: The user was not found
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  * */
 
 usersRouter.get("/:id",verifyJWT, forAdminOnly, httpGetUserByID);
 
 /**
  * @swagger
- * /users:
- *   post:
- *     summary: Create new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       201:
- *         description: The user was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Product'
-*/
-usersRouter.post('/', httpAddUser)
-
-/**
- * @swagger
  * /users/{id}:
  *   put:
  *     summary: Update  user by id
+ *     security:
+ *       - bearerAuth:
+ *           - admin
  *     tags: [Users]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -144,8 +165,12 @@ usersRouter.post('/', httpAddUser)
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: The user was not found
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 usersRouter.put("/:id", verifyJWT, forAdminOnly, httpUpdateUser);
@@ -155,6 +180,9 @@ usersRouter.put("/:id", verifyJWT, forAdminOnly, httpUpdateUser);
  * /users/{id}:
  *   delete:
  *     summary: Delete user by id
+ *     security:
+ *       - bearerAuth:
+ *           - admin
  *     tags: [Users]
  *     parameters:
  *      - $ref: '#/components/parameters/IdParam'
@@ -165,10 +193,12 @@ usersRouter.put("/:id", verifyJWT, forAdminOnly, httpUpdateUser);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/user'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: The user was not found
- *       500:
- *         description: Server error
+ *         $ref: '#/components/responses/notFound'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 usersRouter.delete("/:id", verifyJWT, forAdminOnly, httpDeleteUser);
