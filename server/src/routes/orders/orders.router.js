@@ -10,7 +10,7 @@ const {
 const {forManagerOnly} = require("../../middleware/accessMidleware");
 
 const ordersRouter = express.Router();
-ordersRouter.use(verifyJWT,forManagerOnly);
+ordersRouter.use(verifyJWT);
 /**
  * @swagger
  * components:
@@ -116,7 +116,7 @@ ordersRouter.use(verifyJWT,forManagerOnly);
  *       403:
  *         $ref: '#/components/responses/Forbidden'
  */
-ordersRouter.get("/", httpGetAllOrders);
+ordersRouter.get("/", forManagerOnly, httpGetAllOrders);
 
 /**
 * @swagger
@@ -149,7 +149,7 @@ ordersRouter.get("/", httpGetAllOrders);
 *         $ref: '#/components/responses/Forbidden'
 */
 
-ordersRouter.get("/bestSellingProducts", httpBestSellingProducts);
+ordersRouter.get("/bestSellingProducts", forManagerOnly, httpBestSellingProducts);
 
 /**
  * @swagger
@@ -186,10 +186,7 @@ ordersRouter.get("/bestSellingProducts", httpBestSellingProducts);
  *         $ref: '#/components/responses/Forbidden'
  */
 
-ordersRouter.get(
-  "/revenueByRangeDate",
-  httpTotalRevenueByDateRange
-);
+ordersRouter.get(  "/revenueByRangeDate", forManagerOnly,  httpTotalRevenueByDateRange);
 /**
  * @swagger
  * /orders/{id}:
@@ -215,7 +212,7 @@ ordersRouter.get(
  *       403:
  *         $ref: '#/components/responses/Forbidden'
  * */
-ordersRouter.get("/:id", httpGetOrderByID);
+ordersRouter.get("/:id", forManagerOnly, httpGetOrderByID);
 /**
  * @swagger
  * /orders:

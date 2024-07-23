@@ -17,7 +17,7 @@ async function getFilteredProducts(filtersCategory, searchText) {
 }
 
 function getProductBy (productField){
-    return products.findOne(productField).lean().exec();
+    return products.findOne(productField);
 }
 
 function getProductByID(productID) {

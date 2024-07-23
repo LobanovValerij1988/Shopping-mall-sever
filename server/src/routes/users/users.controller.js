@@ -58,7 +58,7 @@ async function httpAddUser(req, res) {
         const hashedPwd = await hash(password, 10)
         const user = await addNewUser({nickName, password:hashedPwd, roles:["customer"], activeStatus: true})
         if(user){
-            const accessToken = await createAccessToken(res, user);
+            const accessToken = await createAccessToken(user);
             res.status(201).json({accessToken})
         }
         else {

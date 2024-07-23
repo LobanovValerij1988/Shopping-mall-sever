@@ -8,7 +8,7 @@ const {
 
 const { updateProduct } = require("../../models/products.model");
 const { getProductByID } = require("../../models/products.model");
-const { getCustomer } = require("../../models/users.model");
+const { getUserBy} = require("../../models/users.model");
 
 async function httpGetAllOrders(req, res) {
   try {
@@ -39,25 +39,29 @@ async function httpGetOrderByID(req, res) {
 
 async function httpAddOrder(req, res) {
   try {
-    const { products: orderedProducts } = req.body;
+    const {products:orderedProducts}  = req.body;
+    const userName = req.nickName;
     if(!Array.isArray(orderedProducts) || !orderedProducts.length){
       return res.status(400).json({
         error: "products field can not be empty",
       });
     }
     const savingProducts = [];
-    const buyer = await getCustomer(); //untill I add cuctomer to my front end
-    for (orderedProduct of orderedProducts) {
-      const productInDB = await getProductByID(orderedProduct.productId);
+    const user = await getUserBy({nickName: userName});
+    for (const orderedProduct of orderedProducts) {
+
+      const productInDB = await getProductByID(orderedProduct._id);
       if(!productInDB){
         return;
       }
       // subtract ordered product quantity from quatity in the store
-
-      await updateProduct({
-        _id: productInDB._id,
-        quantity: productInDB.quantity - orderedProduct.quantity,
-      });
+       productInDB.quantity = productInDB.quantity - orderedProduct.quantity
+      if(productInDB.quantity < 0){
+        return res.status(400).json({
+          error: "not enough product on the store",
+        });
+      }
+      await updateProduct(productInDB);
 
       savingProducts.push({
         name: productInDB.name,
@@ -66,7 +70,7 @@ async function httpAddOrder(req, res) {
       });
     }
     const addedOrder = await addNewOrder({
-      customer: buyer._id,
+      user: user._id,
       products: savingProducts,
     });
 
