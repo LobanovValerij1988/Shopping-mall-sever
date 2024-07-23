@@ -1,8 +1,8 @@
-const orders = require("./orders.mongo");
-const { getUser } = require("./users.model");
+import {orders} from "./orders.mongo";
+import {getUserBy} from "./users.model";
 
 async function seedOrders() {
-  const customer = await getUser();
+  const customer = await getUserBy({});
   const seedingOrders = [
     {
       products: [
@@ -26,15 +26,15 @@ async function seedOrders() {
       products: [{ name: "bentley", quantity: 1, price: 100000 }],
     },
   ];
-  seedingOrders.forEach(async (seedingOrder) => {
+  for (const seedingOrder of seedingOrders) {
     await orders.create({
       products: seedingOrder.products,
-      customer: customer._id,
+      customer: customer!._id,
     });
-  });
+  }
 }
 
-async function loadOrdersFromSeed() {
+export async function loadOrdersFromSeed() {
     const firstOrder = await orders.findOne();
     if (firstOrder) {
       console.log("Orders data already loaded");
@@ -43,6 +43,3 @@ async function loadOrdersFromSeed() {
     }
   }
 
-module.exports={
-    loadOrdersFromSeed
-}

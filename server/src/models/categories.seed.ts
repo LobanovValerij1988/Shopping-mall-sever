@@ -1,8 +1,8 @@
-const categories = require("./categories.mongo");
+import {categories} from "./categories.mongo";
 
 async function seedCategories() {
   let seedingCategories = ["wears", "tools", "books", "cars", "realEstate"];
-  seedingCategories.forEach(async (seedingCategory) => {
+  for (const seedingCategory of seedingCategories) {
     await categories.updateOne(
       { name: seedingCategory },
       { name: seedingCategory },
@@ -10,10 +10,10 @@ async function seedCategories() {
         upsert: true,
       }
     );
-  });
+  }
 }
 
-async function loadCategoriesFromSeed() {
+export async function loadCategoriesFromSeed() {
   const firstCategory = await categories.findOne();
   if (firstCategory) {
     console.log("Categories data already loaded");

@@ -1,7 +1,7 @@
-const products = require("./products.mongo");
-const categories = require("./categories.mongo");
+import {products} from "./products.mongo";
+import {categories} from "./categories.mongo";
 
-async function seedingProducts() {
+export async function seedingProducts() {
   const seedingProducts = [
     { name: "snikers", categoryName: "wears", price: 25, quantity: 17 },
     { name: "blouse", categoryName: "wears", price: 55, quantity: 53 },
@@ -11,18 +11,18 @@ async function seedingProducts() {
     { name: "hummer", categoryName: "tools", price: 1, quantity: 304 },
   ];
   products.deleteMany({});
-  seedingProducts.forEach(async (seedingProduct) => {
+  for (const seedingProduct of seedingProducts) {
     const category = await categories.findOne({
       name: seedingProduct.categoryName,
     });
     await products.create({
       ...seedingProduct,
-      category: category._id,
+      category: category!._id,
     });
-  });
+  }
 }
 
-async function loadProductsFromSeed() {
+export async function loadProductsFromSeed() {
   const firstProduct = await products.findOne();
   if (firstProduct) {
     console.log("Products data already loaded");
@@ -31,6 +31,3 @@ async function loadProductsFromSeed() {
   }
 }
 
-module.exports = {
-  loadProductsFromSeed,
-};

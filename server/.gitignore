@@ -12,6 +12,9 @@
 /logs
 /public
 
+#ts
+/dist
+
 # misc
 
 .DS_Store

@@ -1,6 +1,14 @@
-const mongoose = require("mongoose");
+import {Schema, model, Types} from 'mongoose';
 
-const productSchema = new mongoose.Schema({
+export interface IProduct {
+  _id: string | boolean;
+  name: string;
+  quantity: number;
+  price: number;
+  category: Types.ObjectId;
+}
+
+const productSchema = new Schema({
   name: {
     type: String,
     required: [true, "name can not be empty"],
@@ -18,10 +26,10 @@ const productSchema = new mongoose.Schema({
     min: [0, "Price cannot be negative"],
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Category",
     required: true,
   },
 });
 
-module.exports = mongoose.model("Product", productSchema);
+export const products= model("Product", productSchema);

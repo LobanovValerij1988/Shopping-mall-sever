@@ -1,30 +1,31 @@
-const orders = require("./orders.mongo");
+import {IOrder, orders} from "./orders.mongo";
+import {IUser} from "./users.mongo";
 
-function getAllOrders() {
+export function getAllOrders() {
   return  orders
     .find()
-    .populate({
+    .populate<{user: IUser}>({
       path: "user",
       select: "nickName -_id",
     }).exec();
 }
 
-function getOrderByID(orderID) {
+export function getOrderByID(orderID: string) {
   return  orders
     .findById(orderID)
-    .populate({
+    .populate<{user: IUser}>({
       path: "user",
       select: "nickName -_id",
     }).exec();
 }
 
-async function addNewOrder(order) {
+export async function addNewOrder(order: IOrder ) {
   return   orders.create(order);
 }
 
 // aggregate
 
-async function bestSellingProducts() {
+export async function bestSellingProducts() {
   return orders
     .aggregate([
       { $unwind: "$products" },
@@ -41,7 +42,7 @@ async function bestSellingProducts() {
     .limit(5);
 }
 
-function totalRevenueByDateRange(startDate, endDate) {
+export function totalRevenueByDateRange(startDate:string, endDate: string) {
   return orders.aggregate([
     {
       $match: {
@@ -78,11 +79,3 @@ function totalRevenueByDateRange(startDate, endDate) {
     }
   ]);
 }
-
-module.exports = {
-  getAllOrders,
-  getOrderByID,
-  addNewOrder,
-  bestSellingProducts,
-  totalRevenueByDateRange,
-};

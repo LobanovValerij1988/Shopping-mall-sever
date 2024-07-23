@@ -1,35 +1,35 @@
-const categories = require("./categories.mongo");
-const products = require("./products.mongo");
+import {categories, ICategory} from "./categories.mongo";
+import {HydratedDocument} from "mongoose";
 
-function getAllCategories() {
+export function getAllCategories() {
   return  categories.find().lean().exec();
 }
 
-function getCategoryByID(categoryID) {
+export function getCategoryByID(categoryID:string) {
   return  categories.findById(categoryID);
 }
 
-function getCategoryBy (categoryField){
+export function getCategoryBy (categoryField:{name:string}) {
   return categories.findOne(categoryField).lean().exec();
 }
 
-async function addNewCategory(category) {
+export async function addNewCategory(category: Omit<ICategory,"_id">) {
   return  categories.create(category);
 
 }
 
-function deleteCategory(categoryID) {
+export function deleteCategory(categoryID:string) {
   return  categories.findByIdAndDelete(categoryID);
 }
 
-async function updateCategory( updatedCategory) {
+export async function updateCategory( updatedCategory: HydratedDocument<ICategory>) {
   await updatedCategory.save();
   return  updatedCategory;
 }
 
 //aggregation function
 
-function totalProductQuantityByCategory() {
+export function totalProductQuantityByCategory() {
   return  categories.aggregate([
     {
       $lookup: {
@@ -52,14 +52,3 @@ function totalProductQuantityByCategory() {
     },
   ]);
 }
-
-module.exports = {
-  getAllCategories,
-  getCategoryByID,
-  getCategoryBy,
-  addNewCategory,
-  updateCategory,
-  deleteCategory,
-  //aggregation
-  totalProductQuantityByCategory,
-};

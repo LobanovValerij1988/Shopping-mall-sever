@@ -1,3 +1,5 @@
+import {Express} from "express";
+
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
@@ -14,7 +16,7 @@ const { logger } = require("./services/logger");
 const { errorHandler } = require('./services/errorHandler');
 
 
-const app = express();
+const app: Express = express();
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecification));
 app.use(logger);

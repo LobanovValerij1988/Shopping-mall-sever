@@ -1,6 +1,13 @@
-const mongoose = require("mongoose");
+import {Schema, model, Types} from 'mongoose';
 
-const productSchema = new mongoose.Schema(
+interface IProduct {
+    _id: boolean;
+    name: string;
+    quantity: number;
+    price: number;
+}
+
+const productSchema = new Schema<IProduct>(
   {
     _id: false,
     name: {
@@ -21,15 +28,22 @@ const productSchema = new mongoose.Schema(
   { excludeIndexes: true }
 );
 
-const orderSchema = new mongoose.Schema({
+export interface IOrder {
+    _id: string;
+    orderDate?: Date;
+    user: Types.ObjectId;
+    price: number;
+    products: IProduct[];
+}
+
+const orderSchema = new Schema<IOrder>({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: [true, "user is the necessary field"],
   },
   orderDate: {
     type: Date,
-    required: true,
     default: Date.now,
   },
   products: [
@@ -40,4 +54,4 @@ const orderSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+export const orders = model<IOrder>("Order", orderSchema);

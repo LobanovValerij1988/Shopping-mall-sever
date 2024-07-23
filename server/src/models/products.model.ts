@@ -1,6 +1,8 @@
-const products = require("./products.mongo");
+import {IProduct, products} from "./products.mongo";
+import {ICategory} from "./categories.mongo";
+import {HydratedDocument} from "mongoose";
 
-async function getFilteredProducts(filtersCategory, searchText) {
+export async function getFilteredProducts(filtersCategory: string[], searchText: string) {
     searchText= searchText === undefined ? "" : searchText;
     let filteredProducts;
     if(filtersCategory) {
@@ -9,42 +11,42 @@ async function getFilteredProducts(filtersCategory, searchText) {
     else{
         filteredProducts = products.find({}, {});
     }
-     return filteredProducts.find({name:{$regex:new RegExp("^"+ searchText, 'i')}}).populate({
+     return filteredProducts.find({name:{$regex:new RegExp("^"+ searchText, 'i')}}).populate<{ category: ICategory }>({
          path: "category",
          select: "name",
      }).lean().exec();
 
 }
 
-function getProductBy (productField){
+export function getProductBy (productField:{name?: string}) {
     return products.findOne(productField);
 }
 
-function getProductByID(productID) {
+export function getProductByID(productID:string) {
   return products
     .findById(productID, {})
-    .populate({
+    .populate<{ category: ICategory }>({
       path: "category",
       select: "name",
     })
 }
 
-async function addNewProduct(product) {
+export async function addNewProduct(product: Omit<IProduct,"_id">) {
   const savedProduct = await products.create(product);
-   return  getProductByID(savedProduct._id);
+   return  getProductByID(savedProduct._id.toString());
 }
 
-async function updateProduct(updatedProduct) {
+export async function updateProduct(updatedProduct:HydratedDocument<IProduct>) {
     await updatedProduct.save();
-    return  getProductByID(updatedProduct._id);
+    return  getProductByID(updatedProduct._id.toString());
 }
 
-function deleteProduct(productID) {
+export function deleteProduct(productID: string) {
     return  products.findByIdAndDelete(productID);
 }
 
 // aggregate
-function getLowStockProductsWhichOrdered(quantityLimit) {
+export function getLowStockProductsWhichOrdered(quantityLimit: number) {
   return  products.aggregate([
     //find products which quantity less than quantity limit
     { $match: { quantity: { $lt: quantityLimit } } },
@@ -63,13 +65,3 @@ function getLowStockProductsWhichOrdered(quantityLimit) {
     { $unset: ["productDetails","__v"] },
   ]);
 }
-
-module.exports = {
-  getFilteredProducts,
-  getProductByID,
-  getProductBy,
-  addNewProduct,
-  updateProduct,
-  deleteProduct,
-  getLowStockProductsWhichOrdered,
-};
