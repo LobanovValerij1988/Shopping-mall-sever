@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import jwt, {JwtPayload} from 'jsonwebtoken';
 import {IUser, role} from "../models/users.mongo";
+import {getUserBy} from "../models/users.model";
 
 declare module "jsonwebtoken" {
     export interface JwtPayload {
@@ -31,8 +32,15 @@ export const verifyJWT = async (req:Request, res:Response, next:  NextFunction) 
                     error: "expired",
                 });
             }
-            (req as RequestCustom).nickName = (decodedToken as JwtPayload).UserInfo.nickName;
-            (req as RequestCustom).roles = (decodedToken as JwtPayload).UserInfo.roles;
+            const nickName = (decodedToken as JwtPayload).UserInfo.nickName
+            const user = await getUserBy({nickName});
+            if(!user) {
+                return res.status(400).json({
+                    error: "unknown user",
+                });
+            }
+            (req as RequestCustom).nickName = user.nickName;
+            (req as RequestCustom).roles = user.roles;
             next();
         }
     );
