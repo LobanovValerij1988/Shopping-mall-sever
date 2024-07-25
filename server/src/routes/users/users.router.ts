@@ -1,16 +1,10 @@
-const express = require("express");
-const verifyJWT = require("../../services/verifyJWT");
-const {
-    httpGetAllUsers,
-    httpGetUserByID,
-    httpAddUser,
-    httpUpdateUser,
-    httpDeleteUser
-} = require("./users.controller");
-const {forAdminOnly} = require("../../middleware/accessMidleware");
+import express from 'express';
+
+import {httpDeleteUser, httpGetAllUsers, httpGetUserByID, httpUpdateUser} from "./users.controller";
+import {verifyJWT} from "../../services/verifyJWT";
+import {forAdminOnly} from "../../middleware/accessMidleware";
 
 const usersRouter = express.Router();
-
 /**
  * @swagger
  * components:
@@ -28,7 +22,7 @@ const usersRouter = express.Router();
  *           description: The auto-generated id of the order
  *         nickName:
  *           type: string
- *           description: The user name
+ *           description: The username
  *         password:
  *           type: string
  *           description: The user password
@@ -203,4 +197,4 @@ usersRouter.put("/:id", verifyJWT, forAdminOnly, httpUpdateUser);
 
 usersRouter.delete("/:id", verifyJWT, forAdminOnly, httpDeleteUser);
 
-module.exports = usersRouter;
+export default usersRouter;

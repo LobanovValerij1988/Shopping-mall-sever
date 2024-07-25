@@ -1,13 +1,9 @@
-const express = require("express");
-const authRouter = express.Router();
-const loginLimiter = require('../../services/loginLimiter');
-const {
-    login,
-    refresh,
-    logout,
-} = require('./auth.controller')
-const {httpAddUser} = require("../users/users.controller");
+import express from "express";
+import {login, logout, refresh} from "./auth.controller";
+import {loginLimiter} from '../../services/loginLimiter';
+import {httpAddUser} from "../users/users.controller";
 
+ const authRouter = express.Router();
 /**
  * @swagger
  * tags:
@@ -108,4 +104,4 @@ authRouter.get('/refresh',refresh);
 
 authRouter.post('/logout', logout);
 
-module.exports = authRouter;
+export default authRouter;

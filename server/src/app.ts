@@ -1,22 +1,21 @@
-import {Express} from "express";
+import express from "express";
+import path from "path";
 
-const path = require("path");
-const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const swaggerUI = require("swagger-ui-express");
 const cookieParser = require('cookie-parser');
-const {swaggerSpecification} = require ("./services/svagger")
-const productsRouter = require("./routes/products/products.router");
-const categoriesRouter = require("./routes/categories/categories.router");
-const ordersRouter = require("./routes/orders/orders.router");
-const usersRouter = require("./routes/users/users.router");
-const authRouter = require("./routes/auth/auth.router");
-const { logger } = require("./services/logger");
-const { errorHandler } = require('./services/errorHandler');
 
+import {swaggerSpecification} from "./services/svagger";
+import productsRouter from "./routes/products/products.router";
+import categoriesRouter  from "./routes/categories/categories.router";
+import ordersRouter from "./routes/orders/orders.router";
+import authRouter from "./routes/auth/auth.router";
+import {logger} from "./services/logger";
+import {errorHandler} from './services/errorHandler';
+import usersRouter from "./routes/users/users.router"
 
-const app: Express = express();
+const app = express();
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecification));
 app.use(logger);
@@ -43,4 +42,4 @@ app.get("/*", (req, res) => {
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

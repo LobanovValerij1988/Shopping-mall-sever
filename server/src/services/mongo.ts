@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const {logEvents} = require("./logger");
+import mongoose from "mongoose";
+import {logEvents} from "./logger";
 require("dotenv").config();
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -8,21 +8,18 @@ mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready");
 });
 
-mongoose.connection.on("error", (err) => {
+mongoose.connection.on("error", (err:any) => {
   console.error(err);
   logEvents(`${err.code}\t${err.syscall}
                        \t${err.hostname}`, 'mongoErrorLog.log')
 });
-async function connectToMongo() {
+
+export  async function connectToMongo() {
   try {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(MONGO_URL!);
   }
   catch (err){
     console.log(err)
 
   }
 }
-
-module.exports = {
-  connectToMongo,
-};

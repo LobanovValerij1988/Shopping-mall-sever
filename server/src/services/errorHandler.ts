@@ -1,13 +1,12 @@
-const { logEvents } = require('./logger');
+import {NextFunction, Request, Response} from "express";
+import {logEvents} from "./logger";
 
-const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err: any, req: Request, res: Response, next:NextFunction ) => {
     logEvents(`${err.name}\t${err.message}\t${req.method}
                        \t${req.url}\t${req.headers.origin}`, 'errorLog.log')
     console.log(err.stack,"err");
     const status = res.status ? res.status: 500;
-    res.status(status);
+    res.status(status as number);
     res.json({message: err.message});
     next();
 }
-
-module.exports = { errorHandler }

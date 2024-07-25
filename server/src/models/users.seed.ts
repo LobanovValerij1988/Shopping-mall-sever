@@ -1,25 +1,21 @@
-const users = require("./users.mongo");
-const {hash} = require("bcrypt");
+import {users} from "./users.mongo";
+import bcrypt from 'bcrypt';
 
-async function seedUsers() {
+export async function seedUsers() {
   let seedingUsers = [
-    { nickName: "Sergio", roles: ["customer"], activeStatus: true, password: hash( "some kind") },
-    { nickName: "Sang Chin", roles: ["admin"], activeStatus: false, password: hash("password") },
+    { nickName: "Sergio", roles: ["customer"], activeStatus: true, password: bcrypt.hash( "some kind",10) },
+    { nickName: "Sang Chin", roles: ["admin"], activeStatus: false, password: bcrypt.hash("password",10) },
   ];
-  seedingUsers.forEach(async (seedingUser) => {
+  for (const seedingUser of seedingUsers) {
     await users.create(seedingUser);
-    });
+    }
 }
 
-async function loadUserFromSeed() {
+export async function loadUserFromSeed() {
   const firstUser = await users.findOne();
   if (firstUser) {
     console.log("User data already loaded");
   } else {
     await seedUsers();
   }
-}
-
-module.exports= {
-  loadUserFromSeed
 }

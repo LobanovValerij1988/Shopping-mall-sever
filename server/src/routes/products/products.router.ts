@@ -1,16 +1,16 @@
-const express = require("express");
-const verifyJWT = require("../../services/verifyJWT");
-const {
+import express from "express";
+
+import { verifyJWT } from "../../services/verifyJWT";
+import {forManagerOnly} from "../../middleware/accessMidleware";
+import {
+  httpAddProduct, httpDeleteProduct,
   httpGetFilteredProducts,
-  httpGetProductByID,
-  httpDeleteProduct,
-  httpAddProduct,
-  httpUpdateProduct,
   httpGetLowStockProducts,
-} = require("./products.controller");
-const {forManagerOnly} = require("../../middleware/accessMidleware");
+  httpGetProductByID, httpUpdateProduct
+} from "./products.controller";
 
 const productsRouter = express.Router();
+
   productsRouter.use(verifyJWT);
 /**
  * @swagger
@@ -278,4 +278,4 @@ productsRouter.put("/:id", forManagerOnly, httpUpdateProduct);
 
 productsRouter.delete("/:id", forManagerOnly, httpDeleteProduct);
 
-module.exports = productsRouter;
+export default productsRouter;

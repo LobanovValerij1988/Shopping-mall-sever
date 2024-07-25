@@ -1,13 +1,14 @@
-const express = require("express");
-const verifyJWT = require("../../services/verifyJWT");
-const {
-  httpGetAllOrders,
-  httpGetOrderByID,
+import express from 'express';
+
+import {verifyJWT} from "../../services/verifyJWT";
+import {forManagerOnly} from "../../middleware/accessMidleware";
+import {
   httpAddOrder,
   httpBestSellingProducts,
-  httpTotalRevenueByDateRange,
-} = require("./orders.controller");
-const {forManagerOnly} = require("../../middleware/accessMidleware");
+  httpGetAllOrders,
+  httpGetOrderByID,
+  httpTotalRevenueByDateRange
+} from "./orders.controller";
 
 const ordersRouter = express.Router();
 ordersRouter.use(verifyJWT);
@@ -239,4 +240,4 @@ ordersRouter.get("/:id", forManagerOnly, httpGetOrderByID);
  */
 ordersRouter.post("/", httpAddOrder);
 
-module.exports = ordersRouter;
+export default ordersRouter;

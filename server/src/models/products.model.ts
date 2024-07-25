@@ -1,11 +1,10 @@
-import {IProduct, products} from "./products.mongo";
+import {IMongoProduct, IProduct, products} from "./products.mongo";
 import {ICategory} from "./categories.mongo";
-import {HydratedDocument} from "mongoose";
 
-export async function getFilteredProducts(filtersCategory: string[], searchText: string) {
-    searchText= searchText === undefined ? "" : searchText;
+export async function getFilteredProducts(filtersCategory: string[] =[], searchText:string |undefined) {
+    searchText = searchText === undefined ? "" : searchText;
     let filteredProducts;
-    if(filtersCategory) {
+    if(filtersCategory.length > 0) {
         filteredProducts = products.find({category:{$in:filtersCategory}}, {});
     }
     else{
@@ -15,30 +14,25 @@ export async function getFilteredProducts(filtersCategory: string[], searchText:
          path: "category",
          select: "name",
      }).lean().exec();
-
 }
 
-export function getProductBy (productField:{name?: string}) {
-    return products.findOne(productField);
+export function getProductBy (productField:{name?: string, category?:string}) {
+    return products.findOne(productField).exec();
 }
 
 export function getProductByID(productID:string) {
   return products
     .findById(productID, {})
-    .populate<{ category: ICategory }>({
-      path: "category",
-      select: "name",
-    })
 }
 
-export async function addNewProduct(product: Omit<IProduct,"_id">) {
+export async function addNewProduct(product: IProduct) {
   const savedProduct = await products.create(product);
-   return  getProductByID(savedProduct._id.toString());
+   return  getProductByID(savedProduct._id as string);
 }
 
-export async function updateProduct(updatedProduct:HydratedDocument<IProduct>) {
+export async function updateProduct(updatedProduct:IMongoProduct) {
     await updatedProduct.save();
-    return  getProductByID(updatedProduct._id.toString());
+    return  getProductByID(updatedProduct._id as string );
 }
 
 export function deleteProduct(productID: string) {

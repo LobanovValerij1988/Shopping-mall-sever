@@ -1,8 +1,8 @@
-const path = require("path");
+import path from "path";
 require("dotenv").config();
 const swaggerJsDOC = require("swagger-jsdoc");
 
-const URL = process.env.URL || "http://localhost:";
+const URLServer = process.env.URL || "http://localhost:";
 const PORT = process.env.PORT || 8000;
 
 const options = {
@@ -15,7 +15,7 @@ const options = {
         },
         servers: [
             {
-                url: URL + PORT,
+                url: URLServer + PORT,
             },
         ],
         components: {
@@ -41,7 +41,7 @@ const options = {
             ".",
             "categories",
             ".",
-            "categories.router.js"
+            "categories.router.ts"
         ),
         path.join(
             __dirname,
@@ -50,7 +50,7 @@ const options = {
             ".",
             "products",
             ".",
-            "products.router.js"
+            "products.router.ts"
         ),
         path.join(
             __dirname,
@@ -59,7 +59,7 @@ const options = {
             ".",
             "orders",
             ".",
-            "orders.router.js"
+            "orders.router.ts"
         ),
         path.join(
             __dirname,
@@ -68,7 +68,7 @@ const options = {
             ".",
             "users",
             ".",
-            "users.router.js"
+            "users.router.ts"
         ),
         path.join(
             __dirname,
@@ -77,13 +77,10 @@ const options = {
             ".",
             "auth",
             ".",
-            "auth.router.js"
+            "auth.router.ts"
         ),
     ],
 };
 
-const swaggerSpecification = swaggerJsDOC(options);
+export  const swaggerSpecification = swaggerJsDOC(options);
 
-module.exports = {
-    swaggerSpecification
-}

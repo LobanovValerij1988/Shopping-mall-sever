@@ -1,14 +1,15 @@
-import {Schema, model, Types} from 'mongoose';
+import {Schema, model, Types, Document} from 'mongoose';
 
 export interface IProduct {
-  _id: string | boolean;
   name: string;
   quantity: number;
   price: number;
   category: Types.ObjectId;
 }
 
-const productSchema = new Schema({
+export interface IMongoProduct extends IProduct, Document{}
+
+const productSchema = new Schema<IMongoProduct>({
   name: {
     type: String,
     required: [true, "name can not be empty"],
@@ -32,4 +33,4 @@ const productSchema = new Schema({
   },
 });
 
-export const products= model("Product", productSchema);
+export const products= model<IMongoProduct>("Product", productSchema);

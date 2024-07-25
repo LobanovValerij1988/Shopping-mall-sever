@@ -1,5 +1,4 @@
-import {IUser, users} from "./users.mongo";
-import {HydratedDocument} from "mongoose";
+import {IMongoUser, IUser, users} from "./users.mongo";
 
 export async  function getUserBy (queryParam:{nickName?:string}) {
    return users.findOne(queryParam).lean().exec();
@@ -13,13 +12,13 @@ export async function getAllUsers (){
    return users.find().select('-password').lean();
 }
 
-export async function addNewUser (newUser: Omit<IUser,"_id">){
+export async function addNewUser (newUser: IUser){
    return users.create(newUser);
 }
 
-export async function updateUser(updatedUser: HydratedDocument<IUser>) {
+export async function updateUser(updatedUser: IMongoUser) {
     const savedUser = await updatedUser.save();
-    return  getUserById(savedUser._id.toString() );
+    return  getUserById(savedUser._id as string);
 }
 
 export function deleteUser(userID:string) {

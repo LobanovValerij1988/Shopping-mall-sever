@@ -1,4 +1,4 @@
-import {categories, ICategory} from "./categories.mongo";
+import {categories, ICategory, IMongoCategory} from "./categories.mongo";
 import {HydratedDocument} from "mongoose";
 
 export function getAllCategories() {
@@ -13,7 +13,7 @@ export function getCategoryBy (categoryField:{name:string}) {
   return categories.findOne(categoryField).lean().exec();
 }
 
-export async function addNewCategory(category: Omit<ICategory,"_id">) {
+export async function addNewCategory(category: ICategory) {
   return  categories.create(category);
 
 }
@@ -22,7 +22,7 @@ export function deleteCategory(categoryID:string) {
   return  categories.findByIdAndDelete(categoryID);
 }
 
-export async function updateCategory( updatedCategory: HydratedDocument<ICategory>) {
+export async function updateCategory( updatedCategory: IMongoCategory) {
   await updatedCategory.save();
   return  updatedCategory;
 }

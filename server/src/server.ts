@@ -1,12 +1,12 @@
-const http = require("http");
+import {loadCategoriesFromSeed} from "./models/categories.seed";
+import {loadOrdersFromSeed} from "./models/orders.seed";
+import {loadProductsFromSeed} from "./models/products.seed";
+import {loadUserFromSeed} from "./models/users.seed";
+import http from "http";
 require("dotenv").config();
+import {connectToMongo} from "./services/mongo";
 
-const { connectToMongo } = require("./services/mongo");
-const { loadCategoriesFromSeed } = require("./models/categories.seed");
-const { loadUserFromSeed } = require("./models/users.seed");
-const { loadOrdersFromSeed } = require("./models/orders.seed");
-const { loadProductsFromSeed } = require("./models/products.seed");
-const app = require("./app");
+import app from "./app";
 
 const PORT = process.env.PORT || 8000;
 const server = http.createServer(app);

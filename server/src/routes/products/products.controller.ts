@@ -1,26 +1,30 @@
-const {
-  getFilteredProducts,
-  getProductByID,
+import {Request, Response} from "express";
+import {getErrorObject} from "../../helpers/errorHelpers";
+import {
+  addNewProduct, deleteProduct,
+  getFilteredProducts, getLowStockProductsWhichOrdered,
   getProductBy,
-  deleteProduct,
-  addNewProduct,
-  updateProduct,
-  getLowStockProductsWhichOrdered,
-} = require("../../models/products.model");
-const {getCategoryByID} = require("../../models/categories.model");
+  getProductByID,
+  updateProduct
+} from "../../models/products.model";
+import {IProduct} from "../../models/products.mongo";
+import {getCategoryByID} from "../../models/categories.model";
 
-async function httpGetFilteredProducts(req, res) {
+interface IQuery{
+  filtersCategory?: string[],
+  searchText?: string,
+}
+
+export async function httpGetFilteredProducts(req:Request<{},{},{},IQuery>, res:Response) {
  try {
    return res.status(200).json(await getFilteredProducts(req.query.filtersCategory, req.query.searchText));
  }
  catch (err) {
-   return res.status(500).json({
-     error: err.message,
-   });
+   return res.status(500).json(getErrorObject(err));
  }
 }
 
-async function httpGetProductByID(req, res) {
+export async function httpGetProductByID(req:Request, res:Response) {
   try {
     const product = await getProductByID(req.params.id);
     if (!product) {
@@ -31,13 +35,11 @@ async function httpGetProductByID(req, res) {
       return res.status(200).json(product);
     }
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    return res.status(500).json(getErrorObject(err));
   }
 }
 
-async function httpAddProduct(req, res) {
+export async function httpAddProduct(req:Request<{},{},IProduct>, res:Response) {
   try {
     const {name, quantity, price, category} = req.body;
     if(!name || !quantity || !price || !category) {
@@ -47,20 +49,19 @@ async function httpAddProduct(req, res) {
     if(duplicate){
       return res.status(409).json({error: 'Duplicate product name'})
     }
-    const existingCategory =  await getCategoryByID(category);
+    const existingCategory =  await getCategoryByID(category as unknown as string);
     if(!existingCategory){
       return res.status(409).json({error: 'Category is not exist'})
     }
     const addedProduct = await addNewProduct(req.body);
     return res.status(201).json(addedProduct);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    return res.status(500).json(getErrorObject(err));
   }
 }
 
-async function httpUpdateProduct(req, res) {
+
+export async function httpUpdateProduct(req:Request<{id:string},{},IProduct>, res:Response) {
   try {
     const id = req.params.id;
     const {name, quantity, price, category} = req.body;
@@ -75,11 +76,11 @@ async function httpUpdateProduct(req, res) {
 
     const duplicate = await getProductBy({name});
 
-    if(duplicate && duplicate?._id.toString() !== id){
+    if(duplicate && (duplicate?._id as string) !== id){
       return res.status(409).json({error: 'Duplicate product name'})
     }
 
-    const categoryExist = await getCategoryByID(category);
+    const categoryExist = await getCategoryByID(category as unknown as string);
     if(!categoryExist){
       return res.status(404).json({error: 'Category is not exist'});
     }
@@ -92,13 +93,11 @@ async function httpUpdateProduct(req, res) {
     const updatedProduct = await updateProduct(product);
     return res.status(200).json(updatedProduct);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    return res.status(500).json(getErrorObject(err));
   }
 }
 
-async function httpDeleteProduct(req, res) {
+export async function httpDeleteProduct(req:Request, res:Response) {
   try {
     const product = await deleteProduct(req.params.id);
     if (!product) {
@@ -109,30 +108,21 @@ async function httpDeleteProduct(req, res) {
       return res.status(200).json(product);
     }
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    return res.status(500).json(getErrorObject(err));
   }
 }
 
 //agregation
 
-async function httpGetLowStockProducts(req, res) {
+interface IQueryForGetLowStockProducts{
+  lessThan: string;
+}
+
+export async function httpGetLowStockProducts(req:Request<{},{},{},IQueryForGetLowStockProducts>, res:Response) {
   try {
     const products = await getLowStockProductsWhichOrdered(+req.query.lessThan);
       return res.status(200).json(products);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    return res.status(500).json(getErrorObject(err));
   }
 }
-
-module.exports = {
-  httpGetFilteredProducts,
-  httpGetProductByID,
-  httpDeleteProduct,
-  httpUpdateProduct,
-  httpAddProduct,
-  httpGetLowStockProducts,
-};

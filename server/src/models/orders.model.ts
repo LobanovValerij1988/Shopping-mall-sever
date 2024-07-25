@@ -20,7 +20,7 @@ export function getOrderByID(orderID: string) {
 }
 
 export async function addNewOrder(order: IOrder ) {
-  return   orders.create(order);
+  return  orders.create(order);
 }
 
 // aggregate

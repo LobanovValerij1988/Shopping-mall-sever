@@ -1,13 +1,13 @@
-import {Schema, model, Types} from 'mongoose';
+import {Schema, model, Types, Document} from 'mongoose';
 
-interface IProduct {
-    _id: boolean;
+export interface IProductForOrder  {
     name: string;
     quantity: number;
     price: number;
 }
+interface IProductForOrderMongo extends Document, IProductForOrder {}
 
-const productSchema = new Schema<IProduct>(
+const productSchema = new Schema<IProductForOrderMongo >(
   {
     _id: false,
     name: {
@@ -29,14 +29,14 @@ const productSchema = new Schema<IProduct>(
 );
 
 export interface IOrder {
-    _id: string;
     orderDate?: Date;
     user: Types.ObjectId;
-    price: number;
-    products: IProduct[];
+    products: IProductForOrder[];
 }
 
-const orderSchema = new Schema<IOrder>({
+export interface IMongoOrder extends Document, IOrder{}
+
+const orderSchema = new Schema<IMongoOrder>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",

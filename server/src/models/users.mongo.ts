@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-type role = "customer" | 'manager' | 'admin';
+export type role = "customer" | 'manager' | 'admin';
 
 export interface IUser {
   nickName: string;
@@ -9,7 +9,9 @@ export interface IUser {
   activeStatus: boolean;
 }
 
-const userSchema = new Schema<IUser>({
+export interface IMongoUser extends Document,IUser{}
+
+const userSchema = new Schema< IMongoUser>({
   nickName: {
     type: String,
     required: true,
@@ -30,4 +32,4 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-export const users = model("User", userSchema);
+export const users = model<IMongoUser>("User", userSchema);

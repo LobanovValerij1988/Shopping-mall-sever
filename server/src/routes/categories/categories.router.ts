@@ -1,17 +1,17 @@
-const express = require("express");
-const verifyJWT = require("../../services/verifyJWT");
-
-const {
-  httpGetAllCategories,
-  httpGetCategoryByID,
-  httpUpdateCategory,
-  httpAddCategory,
-  httpDeleteCategory,
-  httpTotalProductQuantityByCategory,
-} = require("./categories.controller");
-const {forManagerOnly} = require("../../middleware/accessMidleware");
+import express from 'express';
+import {verifyJWT} from "../../services/verifyJWT";
+import {
+    httpAddCategory,
+    httpDeleteCategory,
+    httpGetAllCategories,
+    httpGetCategoryByID,
+    httpTotalProductQuantityByCategory,
+    httpUpdateCategory
+} from "./categories.controller";
+import {forManagerOnly} from "../../middleware/accessMidleware";
 
 const categoriesRouter = express.Router();
+
  categoriesRouter.use(verifyJWT);
 /**
  * @swagger
@@ -158,6 +158,7 @@ categoriesRouter.get("/getTotalProductsByCategory", httpTotalProductQuantityByCa
  *         $ref: '#/components/responses/Unauthorized'
  * */
 categoriesRouter.get("/:id", httpGetCategoryByID);
+
 /**
  * @swagger
  * /categories:
@@ -249,5 +250,4 @@ categoriesRouter.put("/:id", forManagerOnly, httpUpdateCategory);
 
 categoriesRouter.delete("/:id",  forManagerOnly, httpDeleteCategory);
 
-
-module.exports = categoriesRouter;
+export default categoriesRouter;
